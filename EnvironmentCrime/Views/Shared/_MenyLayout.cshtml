@@ -1,0 +1,24 @@
+﻿@{
+  Layout = "_HeaderLayout";
+}
+<nav>
+  <ul>
+    @if ((string?)TempData["User"] == "avdelningschef")
+    {
+      <li><a asp-controller="Manager" asp-action="StartManager" class="reports">Start(Ärenden)</a></li>
+    }
+    else if ((string?)TempData["User"] == "handläggare")
+    {
+      <li><a asp-controller="Investigator" asp-action="StartInvestigator" class="reports">Start(Ärenden)</a></li>
+    }
+    else
+    {
+      <li><a asp-controller="Coordinator" asp-action="StartCoordinator" class="reports">Start(Ärenden)</a></li>
+      <li><a asp-controller="Coordinator" asp-action="ReportCrime" class="reportAdd">Rapportera brott</a></li>
+    }
+    <li class="right"><a asp-controller="Home" asp-action="Login" class="logout">Logga ut</a></li>
+  </ul>
+</nav><!-- End Nav -->
+<div id="content">
+  @RenderBody()
+</div>
