@@ -1,13 +1,14 @@
 ﻿@{
   Layout = "_HeaderLayout";
+  var role = ViewContext.RouteData.Values["controller"]?.ToString();
 }
 <nav>
   <ul>
-    @if ((string?)TempData["User"] == "avdelningschef")
+    @if (role == "Manager")
     {
       <li><a asp-controller="Manager" asp-action="StartManager" class="reports">Start(Ärenden)</a></li>
     }
-    else if ((string?)TempData["User"] == "handläggare")
+    else if (role == "Investigator")
     {
       <li><a asp-controller="Investigator" asp-action="StartInvestigator" class="reports">Start(Ärenden)</a></li>
     }
@@ -21,4 +22,7 @@
 </nav><!-- End Nav -->
 <div id="content">
   @RenderBody()
+  <footer>
+    &copy; Småstads Kommun All rights reserved.
+  </footer>
 </div>
