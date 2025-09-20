@@ -26,5 +26,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Investigator}/{action=CrimeInvestigator}/{id?}");
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Manager}/{action=CrimeManager}/{id?}");
+
 // Await RunAsync instead of Run to fix S6966
 await app.RunAsync();

@@ -6,10 +6,7 @@ namespace EnvironmentCrime.Controllers
   public class InvestigatorController : Controller
   {
     private readonly IERepository repository;
-    public InvestigatorController(IERepository repo)
-    {
-      repository = repo;
-    }
+    public InvestigatorController(IERepository repo) => repository = repo;
     public ViewResult CrimeInvestigator(string errandid)
     {
       var errandDetail = repository.GetErrandDetail(errandid);

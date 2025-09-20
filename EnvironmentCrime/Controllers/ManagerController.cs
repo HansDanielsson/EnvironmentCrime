@@ -1,17 +1,29 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
   public class ManagerController : Controller
   {
-    public ViewResult CrimeManager()
+    private readonly IERepository repository;
+    public ManagerController(IERepository repo) => repository = repo;
+    public ViewResult CrimeManager(string errandid)
     {
-      return View();
-    }
+      var errandDetail = repository.GetErrandDetail(errandid);
 
+      var employees = repository.Employees.ToList();
+
+      var viewModel = new CrimeManagerEmployee
+      {
+        Errand = errandDetail,
+        Employees = employees
+        
+      };
+      return View(viewModel);
+    }
     public ViewResult StartManager()
     {
-      return View();
+      return View(repository);
     }
   }
 }
