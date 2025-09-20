@@ -1,16 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
   public class InvestigatorController : Controller
   {
-    public ViewResult CrimeInvestigator()
+    private readonly IERepository repository;
+    public InvestigatorController(IERepository repo)
     {
-      return View();
+      repository = repo;
+    }
+    public ViewResult CrimeInvestigator(string errandid)
+    {
+      var errandDetail = repository.GetErrandDetail(errandid);
+
+      var errandStatus = repository.ErrandStatuses.ToList();
+
+      var viewModel = new CrimeInvestigatorErrandStatuses
+      {
+        Errand = errandDetail,
+        ErrandStatuses = errandStatus
+      };
+      return View(viewModel);
     }
     public ViewResult StartInvestigator()
     {
-      return View();
+      return View(repository);
     }
   }
 }

@@ -1,7 +1,9 @@
+using EnvironmentCrime.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IERepository, FakeRepository>();
 
 var app = builder.Build();
 
@@ -18,8 +20,11 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Investigator}/{action=CrimeInvestigator}/{id?}");
 
-app.Run();
+// Await RunAsync instead of Run to fix S6966
+await app.RunAsync();
