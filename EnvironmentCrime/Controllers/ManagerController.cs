@@ -13,7 +13,7 @@ namespace EnvironmentCrime.Controllers
 
       var employees = repository.Employees.ToList();
 
-      var viewModel = new CrimeManagerEmployee
+      var viewModel = new CrimeManagerEmployees
       {
         Errand = errandDetail,
         Employees = employees

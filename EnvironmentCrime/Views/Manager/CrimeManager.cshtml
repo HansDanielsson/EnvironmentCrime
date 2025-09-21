@@ -1,86 +1,87 @@
-﻿@model CrimeManagerEmployee
+﻿@model CrimeManagerEmployees
 @{
-	Layout = "_MenyLayout";
+  Layout = "_MenyLayout";
 }
 <h2>Detaljer för ärendet</h2>
 <p class="info">Du är inloggad som avdelningschef</p>
-<h3>Ärende: @Model.Errand.ErrandId</h3>
+<h3>Ärende: @Model.Errand.Crime.ErrandId</h3>
 
+<!--Nedan ser man en lista på ärenden-->
 <section id="leftColumn">
-	<h3>Anmälan</h3>
-	<p>
-		<span class="label">Typ av brott: </span><br>
-		@Model.Errand.TypeOfCrime
-	</p>
-	<p>
-		<span class="label">Brottsplats: </span><br>
-		@Model.Errand.Place
-	</p>
-	<p>
-		<span class="label">Brottsdatum: </span><br>
-    @Model.Errand.DateOfObservation.ToString("yyyy-MM-dd")
-	</p>
-	<p>
-		<span class="label">Anmälare: </span><br>
-    @Model.Errand.InformerName
-	</p>
-	<p>
-		<span class="label">Telefon: </span><br>
-		@Model.Errand.InformerPhone
-	</p>
-	<p>
-		<span class="label">Observationer:</span><br>
-    @Model.Errand.Observation
-	</p>
+  <h3>Anmälan</h3>
+  <p>
+    <span class="label">Typ av brott: </span><br>
+    @Model.Errand.Crime.TypeOfCrime
+  </p>
+  <p>
+    <span class="label">Brottsplats: </span><br>
+    @Model.Errand.Crime.Place
+  </p>
+  <p>
+    <span class="label">Brottsdatum: </span><br>
+    @Model.Errand.Crime.DateOfObservation.ToString("yyyy-MM-dd")
+  </p>
+  <p>
+    <span class="label">Anmälare: </span><br>
+    @Model.Errand.Crime.InformerName
+  </p>
+  <p>
+    <span class="label">Telefon: </span><br>
+    @Model.Errand.Crime.InformerPhone
+  </p>
+  <p>
+    <span class="label">Observationer:</span><br>
+    @Model.Errand.Crime.Observation
+  </p>
 </section>
 
 <section id="rightColumn">
-	<h3>Utredning</h3>
-	<p>
-		<span class="label">Status:</span><br>
-    @Model.Errand.StatusId
-	</p>
-	<p>
-		<span class="label">Ansvarig avdelning: </span><br>
-    @Model.Errand.DepartmentId
-	</p>
-	<p>
-		<span class="label">Handläggare: </span><br>
-    @Model.Errand.EmployeeId
-	</p>
-	<p>
-		<span class="label">Ytterligare information: </span><br>
-		@Model.Errand.InvestigatorInfo
-	</p>
-	<p>
-		<span class="label">Händelser: </span><br>
-    @Model.Errand.InvestigatorAction
-	</p>
-	<p>
-		<span class="label">Provtagning: </span><br>
-		Provtagning.pdf
-	</p>
-	<p>
-		<span class="label">Bilder: </span><br>
-		<img src="~/images/imagetest.jpg" alt="klicka på bilden">
-	</p>
+  <h3>Utredning</h3>
+  <p>
+    <span class="label">Status:</span><br>
+    @Model.Errand.StatusName
+  </p>
+  <p>
+    <span class="label">Ansvarig avdelning: </span><br>
+    @Model.Errand.DepartmentName
+  </p>
+  <p>
+    <span class="label">Handläggare: </span><br>
+    @Model.Errand.EmployeeName
+  </p>
+  <p>
+    <span class="label">Ytterligare information: </span><br>
+    @Model.Errand.Crime.InvestigatorInfo
+  </p>
+  <p>
+    <span class="label">Händelser: </span><br>
+    @Model.Errand.Crime.InvestigatorAction
+  </p>
+  <p>
+    <span class="label">Provtagning: </span><br>
+    Provtagning.pdf
+  </p>
+  <p>
+    <span class="label">Bilder: </span><br>
+    <img src="~/images/imagetest.jpg" alt="klicka på bilden">
+  </p>
 </section>
 
 <section id="bottomColumn">
-	<h3>Redigera ärende</h3>
-	<p>
-		Ange handläggare:
-		<select name="investigator">
-			<option selected="selected">Välj</option>
-			@foreach(Employee emp in Model.Employees)
-			{
-				<option value="@emp.EmployeeId">@emp.EmployeeName</option>
+  <h3>Redigera ärende</h3>
+  <p>
+    Ange handläggare:
+    <select name="investigator">
+      <option selected="selected">Välj</option>
+      @foreach (Employee emp in Model.Employees)
+      {
+        <option value="@emp.EmployeeId">@emp.EmployeeName</option>
       }
-		</select>
-	</p>
-	<p>
-		<input type="checkbox" name="noAction" value="true"> Ingen åtgärd:
-		<input type="text" name="reason" placeholder="Ange motivering">
-	</p>
-	<p><input class="button" type="submit" value="Spara"></p>
+    </select>
+  </p>
+  <p>
+    <input type="checkbox" name="noAction" value="true"> Ingen åtgärd:
+    <input type="text" name="reason" placeholder="Ange motivering">
+  </p>
+  <p><input class="button" type="submit" value="Spara"></p>
 </section>

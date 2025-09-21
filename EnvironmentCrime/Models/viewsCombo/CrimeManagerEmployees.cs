@@ -1,8 +1,8 @@
 ﻿namespace EnvironmentCrime.Models
 {
-  public class CrimeManagerEmployee
+  public class CrimeManagerEmployees
   {
-    public required Errand Errand { get; set; }
+    public required ErrandMoreInfo Errand { get; set; }
     public required List<Employee> Employees { get; set; }
   }
 }

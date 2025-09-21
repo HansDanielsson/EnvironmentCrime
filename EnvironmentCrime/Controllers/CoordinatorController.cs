@@ -1,12 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
   public class CoordinatorController : Controller
   {
-    public ViewResult CrimeCoordinator()
+    private readonly IERepository repository;
+    public CoordinatorController(IERepository repo) => repository = repo;
+    public ViewResult CrimeCoordinator(string errandid)
     {
-      return View();
+      var errandDetail = repository.GetErrandDetail(errandid);
+
+      var depatrments = repository.Departments.ToList();
+
+      var viewModel = new CrimeCoordinatorDepartments
+      {
+        Errand = errandDetail,
+        Departments = depatrments
+      };
+
+      return View(viewModel);
     }
     public ViewResult ReportCrime()
     {
@@ -15,7 +28,7 @@ namespace EnvironmentCrime.Controllers
 
     public ViewResult StartCoordinator()
     {
-      return View();
+      return View(repository);
     }
 
     public ViewResult Thanks()

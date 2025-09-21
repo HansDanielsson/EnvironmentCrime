@@ -2,7 +2,7 @@
 {
   public class Errand
   {
-    public string? ErrandId { get; set; }
+    public required string ErrandId { get; set; }
     public string? Place { get; set; }
     public string? TypeOfCrime { get; set; }
     public DateTime DateOfObservation { get; set; }
