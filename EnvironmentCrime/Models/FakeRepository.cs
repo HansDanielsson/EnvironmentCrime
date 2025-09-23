@@ -2,6 +2,11 @@
 {
   public class FakeRepository : IERepository
   {
+    /**
+     * Using in-memory collections to simulate a database.
+     * Simulate some errand of crime reports
+     * Changed StatusId, DepartmentId and EmployeeId to correct database keys
+     */
     public IQueryable<Errand> Errands =>
       new List<Errand>
       {
@@ -11,6 +16,10 @@
         new() { ErrandId = "2025-45-0004", Place = "Restaurang Krögaren", TypeOfCrime = "Buller", DateOfObservation = new DateTime(2025,06,04,0,0,0,DateTimeKind.Local), Observation = "Restaurangen hade för högt ljud på så man inte kunde sova", InvestigatorInfo = "Bullermätning har gjorts. Man håller sig inom riktvärden", InvestigatorAction = "Meddelat restaurangen att tänka på ljudet i fortsättning", InformerName = "Roland Jönsson", InformerPhone = "0432-5322255", StatusId = "S_D", DepartmentId = "D01", EmployeeId = "E102"},
         new() { ErrandId = "2025-45-0005", Place = "Torget", TypeOfCrime = "Klotter", DateOfObservation = new DateTime(2025,07,10,0,0,0,DateTimeKind.Local), Observation = "Samtliga skräpkorgar och bänkar är nedklottrade", InvestigatorInfo = "", InvestigatorAction = "", InformerName = "Peter Svensson", InformerPhone = "0432-5322555", StatusId = "S_A", DepartmentId = "DXX", EmployeeId = "EXXX"}
       }.AsQueryable();
+    /**
+     * Simulate some departments
+     * Added a fictive department "Ej tillsatt" with id "DXX" to be used when no department is assigned
+     */
     public IQueryable<Department> Departments =>
       new List<Department>
       {
@@ -20,6 +29,9 @@
         new() { DepartmentId = "D02", DepartmentName = "Lek och Skoj"},
         new() { DepartmentId = "D03", DepartmentName = "Miljöskydd"}
       }.AsQueryable();
+    /**
+     * Simulate some errand statuses
+     */
     public IQueryable<ErrandStatus> ErrandStatuses =>
       new List<ErrandStatus>
       {
@@ -28,6 +40,10 @@
         new() { StatusId = "S_C", StatusName = "Startad"},
         new() { StatusId = "S_D", StatusName = "Färdig"}
       }.AsQueryable();
+    /**
+     * Simulate some employees
+     * Added a fictive employee "Ej tillsatt" with id "EXXX" to be used when no employee is assigned
+     */
     public IQueryable<Employee> Employees =>
       new List<Employee>
       {
@@ -37,7 +53,10 @@
         new() { EmployeeId = "E202", EmployeeName = "Oskar Jansson", RoleTitle = "investigator", DepartmentId = "D02"},
         new() { EmployeeId = "E302", EmployeeName = "Susanne Strid", RoleTitle = "investigator", DepartmentId = "D03"}
       }.AsQueryable();
-
+    /**
+     * Get details for a specific errand with InvokeAsync
+     * including related names for Status, Department and Employee
+     */
     public Task<ErrandInfo> GetErrandDetail(string errandid)
     {
       return Task.Run(() =>
@@ -57,6 +76,9 @@
         return viewModel;
       });
     }
+    /**
+     * Synchronous version of GetErrandDetail
+     */
     public ErrandInfo GetErrand(string errandid)
     {
       var errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);

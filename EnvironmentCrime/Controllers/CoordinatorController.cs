@@ -26,6 +26,11 @@ namespace EnvironmentCrime.Controllers
     {
       return View();
     }
+    /**
+     * The Validate action method handles the submission of the errand form.
+     * It receives an Errand object populated with user input and returns a view
+     * displaying the submitted data for confirmation.
+     */
     [HttpPost]
     public ViewResult Validate(Errand errand)
     {

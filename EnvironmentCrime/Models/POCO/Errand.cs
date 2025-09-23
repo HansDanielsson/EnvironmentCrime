@@ -1,8 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace EnvironmentCrime.Models
 {
+  /**
+   * Represents an errand related to environmental crime.
+   */
   public class Errand
   {
+    /**
+     * Unique identifier for the errand.
+     */
     public required string ErrandId { get; set; }
     [Required(ErrorMessage="Du måste ange platsen!")]
     public string? Place { get; set; }
