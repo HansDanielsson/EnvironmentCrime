@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
@@ -20,9 +21,10 @@ namespace EnvironmentCrime.Controllers
     {
       return View();
     }
-    public ViewResult Validate()
+    [HttpPost]
+    public ViewResult Validate(Errand errand)
     {
-      return View();
+      return View(errand);
     }
   }
 }

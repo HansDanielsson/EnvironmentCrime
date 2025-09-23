@@ -26,9 +26,10 @@ namespace EnvironmentCrime.Controllers
     {
       return View();
     }
-    public ViewResult Validate()
+    [HttpPost]
+    public ViewResult Validate(Errand errand)
     {
-      return View();
+      return View(errand);
     }
   }
 }

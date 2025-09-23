@@ -40,6 +40,10 @@
   </tr>
   @foreach (Errand errand in Model.Errands)
   {
+    /**
+    * Database contains only the Ids for Status, Department and Employee in key fields.
+    * lookup the names from the related collections and add to the ViewModel
+    */
     ErrandStatus? status = Model.ErrandStatuses.FirstOrDefault(s => s.StatusId == errand.StatusId);
     Department? department = Model.Departments.FirstOrDefault(d => d.DepartmentId == errand.DepartmentId);
     Employee? employee = Model.Employees.FirstOrDefault(e => e.EmployeeId == errand.EmployeeId);
