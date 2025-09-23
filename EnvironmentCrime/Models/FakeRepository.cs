@@ -38,13 +38,35 @@
         new() { EmployeeId = "E302", EmployeeName = "Susanne Strid", RoleTitle = "investigator", DepartmentId = "D03"}
       }.AsQueryable();
 
-    public ErrandMoreInfo GetErrandDetail(string errandid)
+    public Task<ErrandInfo> GetErrandDetail(string errandid)
     {
-      Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
-
-      var viewModel = new ErrandMoreInfo
+      return Task.Run(() =>
       {
-        Crime = errand!,
+        var errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
+        var viewModel = new ErrandInfo
+        {
+          Errands = errand!,
+          /**
+           * Database contains only the Ids for Status, Department and Employee in key fields.
+           * lookup the names from the related collections and add to the ViewModel
+           */
+          StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)!.StatusName!,
+          DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)!.DepartmentName!,
+          EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)!.EmployeeName!
+        };
+        return viewModel;
+      });
+    }
+    public ErrandInfo GetErrand(string errandid)
+    {
+      var errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
+      var viewModel = new ErrandInfo
+      {
+        Errands = errand!,
+        /**
+         * Database contains only the Ids for Status, Department and Employee in key fields.
+         * lookup the names from the related collections and add to the ViewModel
+         */
         StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)!.StatusName!,
         DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)!.DepartmentName!,
         EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)!.EmployeeName!

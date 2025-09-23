@@ -9,17 +9,8 @@ namespace EnvironmentCrime.Controllers
     public ManagerController(IERepository repo) => repository = repo;
     public ViewResult CrimeManager(string errandid)
     {
-      var errandDetail = repository.GetErrandDetail(errandid);
-
-      var employees = repository.Employees.ToList();
-
-      var viewModel = new CrimeManagerEmployees
-      {
-        Errand = errandDetail,
-        Employees = employees
-        
-      };
-      return View(viewModel);
+      ViewBag.errandId = errandid;
+      return View(repository.Employees);
     }
     public ViewResult StartManager()
     {

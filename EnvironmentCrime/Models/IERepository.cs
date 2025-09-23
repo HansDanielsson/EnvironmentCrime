@@ -6,6 +6,7 @@
     IQueryable<Department> Departments { get; }
     IQueryable<ErrandStatus> ErrandStatuses { get; }
     IQueryable<Employee> Employees { get; }
-    ErrandMoreInfo GetErrandDetail(string errandid);
+    Task<ErrandInfo> GetErrandDetail(string errandid);
+    ErrandInfo GetErrand(string errandid);
   }
 }

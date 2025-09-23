@@ -9,16 +9,8 @@ namespace EnvironmentCrime.Controllers
     public InvestigatorController(IERepository repo) => repository = repo;
     public ViewResult CrimeInvestigator(string errandid)
     {
-      var errandDetail = repository.GetErrandDetail(errandid);
-
-      var errandStatus = repository.ErrandStatuses.ToList();
-
-      var viewModel = new CrimeInvestigatorErrandStatuses
-      {
-        Errand = errandDetail,
-        ErrandStatuses = errandStatus
-      };
-      return View(viewModel);
+      ViewBag.errandId = errandid;
+      return View(repository.ErrandStatuses);
     }
     public ViewResult StartInvestigator()
     {

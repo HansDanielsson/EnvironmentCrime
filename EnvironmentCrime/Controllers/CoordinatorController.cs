@@ -9,17 +9,8 @@ namespace EnvironmentCrime.Controllers
     public CoordinatorController(IERepository repo) => repository = repo;
     public ViewResult CrimeCoordinator(string errandid)
     {
-      var errandDetail = repository.GetErrandDetail(errandid);
-
-      var depatrments = repository.Departments.ToList();
-
-      var viewModel = new CrimeCoordinatorDepartments
-      {
-        Errand = errandDetail,
-        Departments = depatrments
-      };
-
-      return View(viewModel);
+      ViewBag.errandId = errandid;
+      return View(repository.Departments);
     }
     public ViewResult ReportCrime()
     {

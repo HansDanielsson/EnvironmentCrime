@@ -1,0 +1,17 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using EnvironmentCrime.Models;
+
+namespace EnvironmentCrime.Components
+{
+  public class ShowOneCrime : ViewComponent
+  {
+    private readonly IERepository repository;
+    public ShowOneCrime(IERepository repo) => repository = repo;
+    public async Task<IViewComponentResult> InvokeAsync(string errandId)
+    {
+      var viewModel = await repository.GetErrandDetail(errandId);
+      
+      return View(viewModel);
+    }
+  }
+}
