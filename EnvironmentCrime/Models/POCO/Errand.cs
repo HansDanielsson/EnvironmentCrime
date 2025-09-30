@@ -9,19 +9,20 @@ namespace EnvironmentCrime.Models
     /**
      * Unique identifier for the errand.
      */
-    public required string ErrandId { get; set; }
-    [Required(ErrorMessage="Du måste ange platsen!")]
-    public string? Place { get; set; }
+    public int ErrandId { get; set; }
+    public string? RefNumber { get; set; }
+		[Required(ErrorMessage="Du måste ange platsen!")]
+    public required string Place { get; set; }
     [Required(ErrorMessage="Du måste ange typ av brott!")]
-    public string? TypeOfCrime { get; set; }
+    public required string TypeOfCrime { get; set; }
     [Required(ErrorMessage="Du måste ange datum för iakttagelsen!")]
     [DataType(DataType.Date)]
-    public DateTime DateOfObservation { get; set; }
+    public required DateTime DateOfObservation { get; set; }
     [Required(ErrorMessage="Du måste ange ditt namn!")]
-    public string? InformerName { get; set; }
+    public required string InformerName { get; set; }
     [Required(ErrorMessage="Du måste ange din telefon!")]
     [RegularExpression(@"^[0]{1}[0-9]{1,3}-[0-9]{5,9}$",ErrorMessage="Formatet är riktnummer-telefonnummer!")]
-    public string? InformerPhone { get; set; }
+    public required string InformerPhone { get; set; }
     public string? Observation { get; set; }
     public string? InvestigatorInfo { get; set; }
     public string? InvestigatorAction { get; set; }
