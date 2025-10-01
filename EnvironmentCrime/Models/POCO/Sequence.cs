@@ -1,4 +1,4 @@
-﻿namespace EnvironmentCrime.Models.POCO
+﻿namespace EnvironmentCrime.Models
 {
 	public class Sequence
 	{
