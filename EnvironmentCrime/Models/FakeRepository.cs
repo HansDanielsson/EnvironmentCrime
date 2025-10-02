@@ -57,12 +57,16 @@
      * Get details for a specific errand with InvokeAsync
      * including related names for Status, Department and Employee
      */
-    public Task<ErrandInfo> GetErrandDetail(string errandid)
+    public Task<ErrandInfo> GetErrandDetail(int errandid)
     {
       return Task.Run(() =>
       {
-        var errand = Errands.FirstOrDefault(ed => ed.RefNumber == errandid);
-        var viewModel = new ErrandInfo
+				Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
+				if (errand == null)
+				{
+					throw new InvalidOperationException("Errand not found " + errandid);
+				}
+				var viewModel = new ErrandInfo
         {
           Errands = errand!,
           /**
@@ -79,10 +83,14 @@
     /**
      * Synchronous version of GetErrandDetail
      */
-    public ErrandInfo GetErrand(string errandid)
+    public ErrandInfo GetErrand(int errandid)
     {
-      var errand = Errands.FirstOrDefault(ed => ed.RefNumber == errandid);
-      var viewModel = new ErrandInfo
+			Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
+			if (errand == null)
+			{
+				throw new InvalidOperationException("Errand not found " + errandid);
+			}
+			var viewModel = new ErrandInfo
       {
         Errands = errand!,
         /**

@@ -10,7 +10,7 @@
     /**
      * Get single errand with details
      */
-    Task<ErrandInfo> GetErrandDetail(string errandid);
-    ErrandInfo GetErrand(string errandid);
+    Task<ErrandInfo> GetErrandDetail(int errandid);
+    ErrandInfo GetErrand(int errandid);
   }
 }

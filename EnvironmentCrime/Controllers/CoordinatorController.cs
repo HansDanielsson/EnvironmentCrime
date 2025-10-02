@@ -7,9 +7,10 @@ namespace EnvironmentCrime.Controllers
   {
     private readonly IERepository repository;
     public CoordinatorController(IERepository repo) => repository = repo;
-    public ViewResult CrimeCoordinator(string errandid)
+    public ViewResult CrimeCoordinator(int id)
     {
-      ViewBag.errandId = errandid;
+			// Pass the errandId to the view using ViewBag
+			ViewBag.errandId = id;
       return View(repository.Departments);
     }
     public ViewResult ReportCrime()

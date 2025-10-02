@@ -8,11 +8,15 @@
 		public IQueryable<Employee> Employees => context.Employees;
 		public IQueryable<Errand> Errands => context.Errands;
 		public IQueryable<ErrandStatus> ErrandStatuses => context.ErrandStatuses;
-		public Task<ErrandInfo> GetErrandDetail(string errandid)
+		public Task<ErrandInfo> GetErrandDetail(int errandid)
 		{
 			return Task.Run(() =>
 			{
-				var errand = Errands.FirstOrDefault(ed => ed.RefNumber == errandid);
+				Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
+				if (errand == null)
+				{
+					throw new InvalidOperationException("Errand not found " + errandid);
+				}
 				var viewModel = new ErrandInfo
 				{
 					Errands = errand!,
@@ -20,16 +24,20 @@
            * Database contains only the Ids for Status, Department and Employee in key fields.
            * lookup the names from the related collections and add to the ViewModel
            */
-					StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)!.StatusName!,
-					DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)!.DepartmentName!,
-					EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)!.EmployeeName!
+					StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)?.StatusName ?? "Inte angivet",
+					DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)?.DepartmentName ?? "Inte angivet",
+					EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)?.EmployeeName ?? "Inte angivet"
 				};
 				return viewModel;
 			});
 		}
-		public ErrandInfo GetErrand(string errandid)
+		public ErrandInfo GetErrand(int errandid)
 		{
-			var errand = Errands.FirstOrDefault(ed => ed.RefNumber == errandid);
+			Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid);
+			if (errand == null)
+			{
+				throw new InvalidOperationException("Errand not found " + errandid);
+			}
 			var viewModel = new ErrandInfo
 			{
 				Errands = errand!,
@@ -37,9 +45,9 @@
 				 * Database contains only the Ids for Status, Department and Employee in key fields.
 				 * lookup the names from the related collections and add to the ViewModel
 				 */
-				StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)!.StatusName!,
-				DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)!.DepartmentName!,
-				EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)!.EmployeeName!
+				StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)?.StatusName ?? "Inte angivet",
+				DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)?.DepartmentName ?? "Inte angivet",
+				EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)?.EmployeeName ?? "Inte angivet"
 			};
 			return viewModel;
 		}
