@@ -74,19 +74,18 @@
 			if (!context.Errands.Any())
 			{
 				context.Errands.AddRange(
-					new Errand { RefNumber = "2025-45-195", Place = "Skogslunden vid Jensens gård", TypeOfCrime = "Sopor", DateOfObservation = new DateTime(2025, 04, 24), Observation = "Anmälaren var på promeand i skogslunden när hon upptäckte soporna", InvestigatorInfo = "Undersökning har gjorts och bland soporna hittades bl.a ett brev till Gösta Olsson", InvestigatorAction = "Brev har skickats till Gösta Olsson om soporna och anmälan har gjorts till polisen 2025-05-01", InformerName = "Ada Bengtsson", InformerPhone = "0432-5545522", StatusId = "S_D", DepartmentId = "D05", EmployeeId = "E501" },
+					new Errand { RefNumber = "2025-45-195", Place = "Skogslunden vid Jensens gård", TypeOfCrime = "Sopor", DateOfObservation = new DateTime(2025, 04, 24, 0, 0, 0, DateTimeKind.Local), Observation = "Anmälaren var på promeand i skogslunden när hon upptäckte soporna", InvestigatorInfo = "Undersökning har gjorts och bland soporna hittades bl.a ett brev till Gösta Olsson", InvestigatorAction = "Brev har skickats till Gösta Olsson om soporna och anmälan har gjorts till polisen 2025-05-01", InformerName = "Ada Bengtsson", InformerPhone = "0432-5545522", StatusId = "S_D", DepartmentId = "D05", EmployeeId = "E501" },
 
-					new Errand { RefNumber = "2025-45-196", Place = "Småstadsjön", TypeOfCrime = "Oljeutsläpp", DateOfObservation = new DateTime(2025, 04, 29), Observation = "Jag såg en oljefläck på vattnet när jag var där för att fiska", InvestigatorInfo = "Undersökning har gjorts på plats, ingen fläck har hittas", InvestigatorAction = "", InformerName = "Bengt Svensson", InformerPhone = "0432-5152255", StatusId = "S_B", DepartmentId = "D04", EmployeeId = "E401" },
+					new Errand { RefNumber = "2025-45-196", Place = "Småstadsjön", TypeOfCrime = "Oljeutsläpp", DateOfObservation = new DateTime(2025, 04, 29,0, 0, 0, DateTimeKind.Local), Observation = "Jag såg en oljefläck på vattnet när jag var där för att fiska", InvestigatorInfo = "Undersökning har gjorts på plats, ingen fläck har hittas", InvestigatorAction = "", InformerName = "Bengt Svensson", InformerPhone = "0432-5152255", StatusId = "S_B", DepartmentId = "D04", EmployeeId = "E401" },
 
-					new Errand { RefNumber = "2025-45-197", Place = "Ödehuset", TypeOfCrime = "Skrot", DateOfObservation = new DateTime(2025, 05, 02), Observation = "Anmälaren körde förbi ödehuset och upptäcker ett antal bilar och annat skrot", InvestigatorInfo = "Undersökning har gjorts och bilder har tagits", InvestigatorAction = "", InformerName = "Olle Pettersson", InformerPhone = "0432-5255522", StatusId = "S_C", DepartmentId = "D03", EmployeeId = "E301" },
+					new Errand { RefNumber = "2025-45-197", Place = "Ödehuset", TypeOfCrime = "Skrot", DateOfObservation = new DateTime(2025, 05, 02, 0, 0, 0, DateTimeKind.Local), Observation = "Anmälaren körde förbi ödehuset och upptäcker ett antal bilar och annat skrot", InvestigatorInfo = "Undersökning har gjorts och bilder har tagits", InvestigatorAction = "", InformerName = "Olle Pettersson", InformerPhone = "0432-5255522", StatusId = "S_C", DepartmentId = "D03", EmployeeId = "E301" },
 
-					new Errand { RefNumber = "2025-45-198", Place = "Restaurang Krögaren", TypeOfCrime = "Buller", DateOfObservation = new DateTime(2025, 06, 04), Observation = "Restaurangen hade för högt ljud på så man inte kunde sova", InvestigatorInfo = "Bullermätning har gjorts. Man håller sig inom riktvärden", InvestigatorAction = "Meddelat restaurangen att tänka på ljudet i fortsättning", InformerName = "Roland Jönsson", InformerPhone = "0432-5322255", StatusId = "S_D", DepartmentId = "D03", EmployeeId = "E302" },
+					new Errand { RefNumber = "2025-45-198", Place = "Restaurang Krögaren", TypeOfCrime = "Buller", DateOfObservation = new DateTime(2025, 06, 04, 0, 0, 0, DateTimeKind.Local), Observation = "Restaurangen hade för högt ljud på så man inte kunde sova", InvestigatorInfo = "Bullermätning har gjorts. Man håller sig inom riktvärden", InvestigatorAction = "Meddelat restaurangen att tänka på ljudet i fortsättning", InformerName = "Roland Jönsson", InformerPhone = "0432-5322255", StatusId = "S_D", DepartmentId = "D03", EmployeeId = "E302" },
 
-					new Errand { RefNumber = "2025-45-199", Place = "Torget", TypeOfCrime = "Klotter", DateOfObservation = new DateTime(2025, 07, 10), Observation = "Samtliga skräpkorgar och bänkar är nedklottrade", InvestigatorInfo = "", InvestigatorAction = "", InformerName = "Peter Svensson", InformerPhone = "0432-5322555", StatusId = "S_A" }
+					new Errand { RefNumber = "2025-45-199", Place = "Torget", TypeOfCrime = "Klotter", DateOfObservation = new DateTime(2025, 07, 10, 0, 0, 0, DateTimeKind.Local), Observation = "Samtliga skräpkorgar och bänkar är nedklottrade", InvestigatorInfo = "", InvestigatorAction = "", InformerName = "Peter Svensson", InformerPhone = "0432-5322555", StatusId = "S_A" }
 				);
 				context.SaveChanges();
 			}
-
 		}
 	}
 }
