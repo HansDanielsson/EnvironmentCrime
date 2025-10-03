@@ -12,7 +12,7 @@ namespace EnvironmentCrime.Components
      */
     public async Task<IViewComponentResult> InvokeAsync(int errandId)
     {
-      var viewModel = await repository.GetErrandDetail(errandId);
+			ErrandInfo viewModel = await repository.GetErrandDetail(errandId);
       return View(viewModel);
     }
   }
