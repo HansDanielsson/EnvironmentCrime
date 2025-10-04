@@ -16,19 +16,17 @@
      * Get single errand with details
      */
 		Task<ErrandInfo> GetErrandDetail(int errandid);
-    ErrandInfo GetErrand(int errandid);
 
 		/**
-     * Create:
-     * Add a new errand to the repository.
+     * Create / Update:
+     * Add or Update a errand to the repository.
      */
-    bool SaveNewErrand(Errand errand);
+    string SaveErrand(Errand errand);
 
 		/**
      * Update:
      * Update an existing item in the repository.
      */
-    void UpdateErrand(Errand errand);
     void UpdateSequense(Sequence sequence);
 	}
 }

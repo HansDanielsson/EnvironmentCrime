@@ -1,4 +1,5 @@
-﻿using EnvironmentCrime.Models;
+﻿using EnvironmentCrime.Infrastructure;
+using EnvironmentCrime.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
@@ -15,7 +16,15 @@ namespace EnvironmentCrime.Controllers
 		}
 		public ViewResult ReportCrime()
 		{
-			return View();
+			Errand? myErrand = HttpContext.Session.Get<Errand>("EnvironmentCrime");
+			if (myErrand == null)
+			{
+				return View();
+			}
+			else
+			{
+				return View(myErrand);
+			}
 		}
 
 		public ViewResult StartCoordinator()
@@ -25,6 +34,10 @@ namespace EnvironmentCrime.Controllers
 
 		public ViewResult Thanks()
 		{
+			/**
+       * Spara ny i databasen och visa det nya RefNumber
+       */
+			HttpContext.Session.Remove("EnvironmentCrime");
 			return View();
 		}
 		/**
@@ -35,6 +48,8 @@ namespace EnvironmentCrime.Controllers
 		[HttpPost]
 		public ViewResult Validate(Errand errand)
 		{
+			// Save user input errand to session
+			HttpContext.Session.Set("EnvironmentCrime", errand);
 			return View(errand);
 		}
 	}

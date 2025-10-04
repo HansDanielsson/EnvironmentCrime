@@ -67,7 +67,7 @@
 			return Task.Run(() =>
 			{
 				Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
-				var viewModel = new ErrandInfo
+				ErrandInfo viewModel = new()
 				{
 					Errands = errand!,
 					/**
@@ -82,41 +82,13 @@
 			});
 		}
 		/**
-     * Synchronous version of GetErrandDetail
-     */
-		public ErrandInfo GetErrand(int errandid)
-		{
-			Errand? errand = Errands.FirstOrDefault(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
-			ErrandInfo viewModel = new()
-			{
-				Errands = errand!,
-				/**
-         * Database contains only the Ids for Status, Department and Employee in key fields.
-         * lookup the names from the related collections and add to the ViewModel
-         */
-				StatusName = ErrandStatuses.FirstOrDefault(st => st.StatusId == errand!.StatusId)!.StatusName!,
-				DepartmentName = Departments.FirstOrDefault(dep => dep.DepartmentId == errand!.DepartmentId)!.DepartmentName!,
-				EmployeeName = Employees.FirstOrDefault(emp => emp.EmployeeId == errand!.EmployeeId)!.EmployeeName!
-			};
-			return viewModel;
-		}
-		/**
-     * Create:
-     * Add a new errand to the repository.
+     * Create / Update:
+     * Add or Update a errand to the repository.
      * Simulate success
      */
-		public bool SaveNewErrand(Errand errand)
+		public string SaveErrand(Errand errand)
 		{
-			return true;
-		}
-		/**
-		 * Update:
-		 * Update an existing item in the repository.
-		 * Simulate success
-		 */
-		public void UpdateErrand(Errand errand)
-		{
-			// Not implemented in fake repository
+			return "Not implemented";
 		}
 		public void UpdateSequense(Sequence sequence)
 		{
