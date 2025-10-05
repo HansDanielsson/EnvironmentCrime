@@ -4,6 +4,10 @@ namespace EnvironmentCrime.Models
 {
   public class EFRepository : IERepository
   {
+    /**
+		 * Read:
+     * Queryable collections for each entity type.
+     */
     private readonly ApplicationDbContext context;
     public EFRepository(ApplicationDbContext ctx) => context = ctx;
     public IQueryable<Department> Departments => context.Departments;
@@ -11,6 +15,10 @@ namespace EnvironmentCrime.Models
     public IQueryable<Errand> Errands => context.Errands;
     public IQueryable<ErrandStatus> ErrandStatuses => context.ErrandStatuses;
     public IQueryable<Sequence> Sequences => context.Sequences;
+
+    /**
+     * Get single errand with details
+     */
     public async Task<ErrandInfo> GetErrandDetail(int errandid)
     {
       Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
@@ -36,14 +44,19 @@ namespace EnvironmentCrime.Models
       };
       return viewModel;
     }
+    /**
+     * Get single sequense with details
+     */
     public async Task<Sequence> GetSequenceAsync(int seqid)
     {
       return await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid) ?? throw new InvalidOperationException("Sequence not found " + seqid);
     }
     /**
-		 * Create / Update:
-		 * Add a new errand to the repository.
-		 */
+     * Update: (Not used atm)
+     * Update a errand to the repository.
+     * Return: True - db insert/update
+     *         False - Error
+     */
     public async Task<bool> SaveErrandAsync(Errand errand)
     {
       try
@@ -69,6 +82,11 @@ namespace EnvironmentCrime.Models
         return false;
       }
     }
+    /**
+     * Create:
+     * Insert an new errand
+     * Return: New RefNumber or error message
+     */
     public async Task<string> SaveNewErrandAsync(Errand errand)
     {
       try
@@ -97,6 +115,10 @@ namespace EnvironmentCrime.Models
       }
       return "Error in SaveNewErrandAsync";
     }
+    /**
+     * Update: (Not used atm.)
+     * Update an existing sequence.
+     */
     public async Task<bool> UpdateSequenceAsync(Sequence sequence)
     {
       try

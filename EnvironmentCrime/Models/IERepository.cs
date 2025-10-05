@@ -23,16 +23,21 @@
     Task<Sequence> GetSequenceAsync(int seqid);
 
     /**
-     * Create / Update:
-     * Add or Update a errand to the repository.
+     * Update: (Not used atm)
+     * Update a errand to the repository.
      * Return: True - db insert/update
      *         False - Error
      */
     Task<bool> SaveErrandAsync(Errand errand);
+    /**
+     * Create:
+     * Insert an new errand
+     * Return: New RefNumber or error message
+     */
     Task<string> SaveNewErrandAsync(Errand errand);
 
     /**
-     * Update:
+     * Update: (Not used atm.)
      * Update an existing sequence.
      */
     Task<bool> UpdateSequenceAsync(Sequence sequence);

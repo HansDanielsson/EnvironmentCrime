@@ -60,9 +60,9 @@ namespace EnvironmentCrime.Models
       {
         new() { Id = 1, CurrentValue = 200 }
       }.AsQueryable();
+
     /**
-     * Get details for a specific errand with InvokeAsync
-     * including related names for Status, Department and Employee
+     * Get single errand with details
      */
     public async Task<ErrandInfo> GetErrandDetail(int errandid)
     {
@@ -90,23 +90,36 @@ namespace EnvironmentCrime.Models
       };
       return viewModel;
     }
+    /**
+     * Get single sequense with details
+     */
     public async Task<Sequence> GetSequenceAsync(int seqid)
     {
       return await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid) ?? throw new InvalidOperationException("Sequence not found " + seqid);
     }
     /**
-     * Create / Update:
-     * Add or Update a errand to the repository.
-     * Simulate success
+     * Update: (Not used atm)
+     * Update a errand to the repository.
+     * Return: True - db insert/update
+     *         False - Error
      */
     public async Task<bool> SaveErrandAsync(Errand errand)
     {
       return await Task.FromResult(true);
     }
+    /**
+     * Create:
+     * Insert an new errand
+     * Return: New RefNumber or error message
+     */
     public async Task<string> SaveNewErrandAsync(Errand errand)
     {
       return await Task.FromResult("Not implemented");
     }
+    /**
+     * Update: (Not used atm.)
+     * Update an existing sequence.
+     */
     public async Task<bool> UpdateSequenceAsync(Sequence sequence)
     {
       return await Task.FromResult(true);
