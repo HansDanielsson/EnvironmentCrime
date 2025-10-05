@@ -1,12 +1,12 @@
 ﻿@model Errand
 @{
-	Layout = "_MenyLayout";
+  Layout = "_MenyLayout";
 }
 <h2>Din anmälan av miljöbrott</h2>
 <p class="info">Du är inloggad som samordnare</p>
 <p class="label">
-	Vänligen läs igenom din anmälan och se att allt är okej.<br>
-	Om något är fel, gå tillbaka och ändra. Annars välj Bekräfta.
+  Vänligen läs igenom din anmälan och se att allt är okej.<br>
+  Om något är fel, gå tillbaka och ändra. Annars välj Bekräfta.
 </p>
 <p><span class="label">Var har brottet skett någonstans?</span><br>@Model.Place</p>
 <p><span class="label">Vilken typ av brott?</span><br>@Model.TypeOfCrime</p>
@@ -15,6 +15,6 @@
 <p><span class="label">Din telefon:</span><br>@Model.InformerPhone</p>
 <p><span class="label">Mer information:</span><br>@Model.Observation<br></p>
 <p>
-	<a asp-controller="Coordinator" asp-action="ReportCrime" class="button">Tillbaka</a>
-	<a asp-controller="Coordinator" asp-action="Thanks" class="button">Bekräfta</a>
+  <a asp-controller="Coordinator" asp-action="ReportCrime" class="button">Tillbaka</a>
+  <a asp-controller="Coordinator" asp-action="Thanks" class="button">Bekräfta</a>
 </p>

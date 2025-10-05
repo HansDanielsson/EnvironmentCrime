@@ -1,26 +1,19 @@
-using EnvironmentCrime.Infrastructure;
-using EnvironmentCrime.Models;
 using Microsoft.AspNetCore.Mvc;
+using EnvironmentCrime.Models;
+using EnvironmentCrime.Infrastructure;
 
 namespace EnvironmentCrime.Controllers
 {
-	public class HomeController : Controller
-	{
-		public ViewResult Index()
-		{
-			Errand? myErrand = HttpContext.Session.Get<Errand>("EnvironmentCrime");
-			if (myErrand == null)
-			{
-				return View();
-			}
-			else
-			{
-				return View(myErrand);
-			}
-		}
-		public ViewResult Login()
-		{
-			return View();
-		}
-	}
+  public class HomeController : Controller
+  {
+    public ViewResult Index()
+    {
+      Errand? myErrand = HttpContext.Session.Get<Errand>("EnvironmentCrime");
+      return myErrand == null ? View() : View(myErrand);
+    }
+    public ViewResult Login()
+    {
+      return View();
+    }
+  }
 }

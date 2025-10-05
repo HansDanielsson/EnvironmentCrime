@@ -1,5 +1,5 @@
-﻿using EnvironmentCrime.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using EnvironmentCrime.Models;
 
 namespace EnvironmentCrime.Controllers
 {

@@ -1,11 +1,14 @@
-﻿using EnvironmentCrime.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using EnvironmentCrime.Models;
 using EnvironmentCrime.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
+
 
 namespace EnvironmentCrime.Controllers
 {
   public class CitizenController : Controller
   {
+    private readonly IERepository repository;
+    public CitizenController(IERepository repo) => repository = repo;
     public ViewResult Contact()
     {
       return View();
@@ -18,11 +21,14 @@ namespace EnvironmentCrime.Controllers
     {
       return View();
     }
-    public ViewResult Thanks()
+    public async Task<ViewResult> Thanks()
     {
       /**
-       * Spara ny i databasen och visa det nya RefNumber
+       * Save a new record and display the generated RefNumber
        */
+      Errand errand = HttpContext.Session.Get<Errand>("EnvironmentCrime")!;
+      ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
+
       HttpContext.Session.Remove("EnvironmentCrime");
       return View();
     }
