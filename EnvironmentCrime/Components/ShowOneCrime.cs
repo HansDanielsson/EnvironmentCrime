@@ -7,12 +7,13 @@ namespace EnvironmentCrime.Components
   {
     private readonly IERepository repository;
     public ShowOneCrime(IERepository repo) => repository = repo;
+
     /**
      * The InvokeAsync method is called when the view component is invoked in a view.
      */
-    public async Task<IViewComponentResult> InvokeAsync(string errandId)
+    public async Task<IViewComponentResult> InvokeAsync(int errandId)
     {
-      var viewModel = await repository.GetErrandDetail(errandId);
+      ErrandInfo viewModel = await repository.GetErrandDetail(errandId);
       return View(viewModel);
     }
   }

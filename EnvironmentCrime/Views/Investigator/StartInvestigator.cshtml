@@ -49,11 +49,32 @@
     Employee? employee = Model.Employees.FirstOrDefault(e => e.EmployeeId == errand.EmployeeId);
     <tr>
       <td>@errand.DateOfObservation.ToString("yyyy-MM-dd")</td>
-      <td><a asp-controller="Investigator" asp-action="CrimeInvestigator" asp-route-errandid="@errand.ErrandId">@errand.ErrandId</a></td>
+      <td><a asp-controller="Investigator" asp-action="CrimeInvestigator" asp-route-id="@errand.ErrandId">@errand.RefNumber</a></td>
       <td>@errand.TypeOfCrime</td>
-      <td>@status!.StatusName</td>
-      <td>@department!.DepartmentName</td>
-      <td>@employee!.EmployeeName</td>
+      @if (status == null)
+      {
+        <td>Okänd</td>
+      }
+      else
+      {
+        <td>@status.StatusName</td>
+      }
+      @if (department == null)
+      {
+        <td>Okänd</td>
+      }
+      else
+      {
+        <td>@department.DepartmentName</td>
+      }
+      @if (employee == null)
+      {
+        <td>Okänd</td>
+      }
+      else
+      {
+        <td>@employee.EmployeeName</td>
+      }
     </tr>
   }
 </table>
