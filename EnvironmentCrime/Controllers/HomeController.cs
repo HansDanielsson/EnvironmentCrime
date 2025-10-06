@@ -8,7 +8,7 @@ namespace EnvironmentCrime.Controllers
   {
     public ViewResult Index()
     {
-      Errand? myErrand = HttpContext.Session.Get<Errand>("EnvironmentCrime");
+      Errand? myErrand = HttpContext.Session.Get<Errand>("IndexCrime");
       return myErrand == null ? View() : View(myErrand);
     }
     public ViewResult Login()

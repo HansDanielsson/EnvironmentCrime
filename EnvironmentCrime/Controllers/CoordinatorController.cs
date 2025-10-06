@@ -16,7 +16,7 @@ namespace EnvironmentCrime.Controllers
     }
     public ViewResult ReportCrime()
     {
-      Errand? myErrand = HttpContext.Session.Get<Errand>("EnvironmentCrime");
+      Errand? myErrand = HttpContext.Session.Get<Errand>("CoordinatorCrime");
       return myErrand == null ? View() : View(myErrand);
     }
 
@@ -30,10 +30,10 @@ namespace EnvironmentCrime.Controllers
       /**
        * Save a new record and display the generated RefNumber
        */
-      Errand errand = HttpContext.Session.Get<Errand>("EnvironmentCrime")!;
+      Errand errand = HttpContext.Session.Get<Errand>("CoordinatorCrime")!;
       ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
 
-      HttpContext.Session.Remove("EnvironmentCrime");
+      HttpContext.Session.Remove("CoordinatorCrime");
       return View();
     }
     /**
@@ -45,7 +45,7 @@ namespace EnvironmentCrime.Controllers
     public ViewResult Validate(Errand errand)
     {
       // Save user input errand to session
-      HttpContext.Session.Set("EnvironmentCrime", errand);
+      HttpContext.Session.Set("CoordinatorCrime", errand);
       return View(errand);
     }
   }
