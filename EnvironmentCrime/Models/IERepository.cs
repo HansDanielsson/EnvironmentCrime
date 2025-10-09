@@ -29,12 +29,14 @@
      *         False - Error
      */
     Task<bool> SaveErrandAsync(Errand errand);
+    
     /**
      * Create:
      * Insert an new errand
      * Return: New RefNumber or error message
      */
     Task<string> SaveNewErrandAsync(Errand errand);
+    Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile);
 
     /**
      * Update: (Not used atm.)

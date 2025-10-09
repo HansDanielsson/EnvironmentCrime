@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EnvironmentCrime.Models;
+using EnvironmentCrime.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EnvironmentCrime.Controllers
 {
@@ -9,13 +11,44 @@ namespace EnvironmentCrime.Controllers
     public ManagerController(IERepository repo) => repository = repo;
     public ViewResult CrimeManager(int id)
     {
+      SaveManagerViewModel viewModel = new()
+      {
+        Employees = [.. repository.Employees.Select(static e => new SelectListItem
+        {
+          Value = e.EmployeeId,
+          Text = e.EmployeeName
+        })]
+      };
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
-      return View(repository.Employees);
+      return View(viewModel);
     }
     public ViewResult StartManager()
     {
       return View(repository);
+    }
+    [HttpPost]
+    public async Task<IActionResult> SaveManager(SaveManagerViewModel model)
+    {
+      if (model != null)
+      {
+        Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
+        if (model.NoAction)
+        {
+          if (!string.IsNullOrEmpty(model.InvestigatorInfo))
+          {
+            errand.InvestigatorInfo = model.InvestigatorInfo;
+            errand.StatusId = "S_B";
+            errand.EmployeeId = "";
+          }
+        }
+        else if (!string.IsNullOrEmpty(model.EmployeeId))
+        {
+          errand.EmployeeId = model.EmployeeId;
+        }
+        await repository.SaveErrandAsync(errand);
+      }
+      return RedirectToAction("StartManager");
     }
   }
 }

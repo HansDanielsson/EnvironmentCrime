@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Employee>
+﻿@model SaveManagerViewModel
 @{
   Layout = "_MenyLayout";
 }
@@ -9,19 +9,18 @@
 
 <section id="bottomColumn">
   <h3>Redigera ärende</h3>
-  <p>
-    Ange handläggare:
-    <select name="investigator">
-      <option selected="selected">Välj</option>
-      @foreach (Employee emp in Model)
-      {
-        <option value="@emp.EmployeeId">@emp.EmployeeName</option>
-      }
-    </select>
-  </p>
-  <p>
-    <input type="checkbox" name="noAction" value="true"> Ingen åtgärd:
-    <input type="text" name="reason" placeholder="Ange motivering">
-  </p>
-  <p><input class="button" type="submit" value="Spara"></p>
+  <form asp-controller="Manager" asp-action="SaveManager" method="post">
+    <p>
+      Ange handläggare:
+      <select asp-for="EmployeeId" asp-items="Model.Employees">
+        <option value="">Välj</option>
+      </select>
+    </p>
+    <p>
+      <input asp-for="NoAction" type="checkbox" />
+      <label asp-for="NoAction">Ingen åtgärd:</label>
+      <input asp-for="InvestigatorInfo" type="text" placeholder="Ange motivering" />
+    </p>
+    <p><input class="button" type="submit" value="Spara"></p>
+  </form>
 </section>

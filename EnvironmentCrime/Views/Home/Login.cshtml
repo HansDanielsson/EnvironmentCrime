@@ -17,7 +17,7 @@
     <input class="button" type="submit" value="Inloggning av samordnare">
     <br>
     <!--Dessa länkar ska tas bort i uppgift 5 eftersom vi då fixar till att inloggningen hämtar rätt sida utifrån rollen-->
-    <a class="button" asp-controller="Manager" asp-action="StartManager">Inloggning av chefer</a><br>
-    <a class="button" asp-controller="Investigator" asp-action="StartInvestigator">Inloggning av handläggare</a>
+    <a asp-controller="Manager" asp-action="StartManager" class="button">Inloggning av chefer</a><br>
+    <a asp-controller="Investigator" asp-action="StartInvestigator" class="button">Inloggning av handläggare</a>
   </p>
 </form>

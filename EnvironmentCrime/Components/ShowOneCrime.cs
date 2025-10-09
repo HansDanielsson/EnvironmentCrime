@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EnvironmentCrime.Models;
+using EnvironmentCrime.Infrastructure;
 
 namespace EnvironmentCrime.Components
 {
@@ -14,6 +15,10 @@ namespace EnvironmentCrime.Components
     public async Task<IViewComponentResult> InvokeAsync(int errandId)
     {
       ErrandInfo viewModel = await repository.GetErrandDetail(errandId);
+      /**
+       * Save Errand to Session "WorkCrime"
+       */
+      HttpContext.Session.Set("WorkCrime", viewModel.Errands);
       return View(viewModel);
     }
   }
