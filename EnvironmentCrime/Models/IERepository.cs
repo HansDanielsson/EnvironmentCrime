@@ -10,6 +10,8 @@
     IQueryable<Employee> Employees { get; }
     IQueryable<Errand> Errands { get; }
     IQueryable<ErrandStatus> ErrandStatuses { get; }
+    IQueryable<Picture> Pictures { get; }
+    IQueryable<Sample> Samples { get; }
     IQueryable<Sequence> Sequences { get; }
 
     /**

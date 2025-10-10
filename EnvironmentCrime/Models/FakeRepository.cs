@@ -110,7 +110,8 @@ namespace EnvironmentCrime.Models
      */
     public async Task<Sequence> GetSequenceAsync(int seqid)
     {
-      return await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid) ?? throw new InvalidOperationException("Sequence not found " + seqid);
+      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
+      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
     }
     /**
      * Update:

@@ -12,7 +12,6 @@ namespace EnvironmentCrime.Models
     public EFRepository(ApplicationDbContext ctx) => context = ctx;
     public IQueryable<Department> Departments => context.Departments;
     public IQueryable<Employee> Employees => context.Employees;
-    /** public IQueryable<Errand> Errands => context.Errands.Include(e => e.Samples).Include(e => e.Pictures);*/
     public IQueryable<Errand> Errands => context.Errands;
     public IQueryable<ErrandStatus> ErrandStatuses => context.ErrandStatuses;
     public IQueryable<Picture> Pictures => context.Pictures;
@@ -66,7 +65,8 @@ namespace EnvironmentCrime.Models
      */
     public async Task<Sequence> GetSequenceAsync(int seqid)
     {
-      return await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid) ?? throw new InvalidOperationException("Sequence not found " + seqid);
+      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
+      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
     }
     /**
      * Update:
