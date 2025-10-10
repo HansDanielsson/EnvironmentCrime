@@ -9,15 +9,20 @@
 
 <section id="bottomColumn">
   <h3>Redigera ärende</h3>
-  <p>
-    Ange enhet:
-    <select name="department">
-      <option selected="selected">Välj</option>
-      @foreach (Department dept in Model)
-      {
-        <option value="@dept.DepartmentId">@dept.DepartmentName</option>
-      }
-    </select>
-  </p>
-  <p><input class="button" type="submit" value="Spara"></p>
+  <form asp-controller="Coordinator" asp-action="SaveDepartment" method="post">
+    <p>
+      Ange enhet:
+      <select name="DepartmentId">
+        <option selected="selected">Välj</option>
+        @foreach (Department dept in Model)
+        {
+          @if (dept.DepartmentName != "Småstads kommun")
+          {
+            <option value="@dept.DepartmentId">@dept.DepartmentName</option>
+          }
+        }
+      </select>
+    </p>
+    <p><input class="button" type="submit" value="Spara"></p>
+  </form>
 </section>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ErrandStatus>
+﻿@model SaveInvestigatorViewModel
 @{
   Layout = "_MenyLayout";
 }
@@ -9,27 +9,28 @@
 
 <section id="bottomColumn">
   <h3>Redigera ärende</h3>
-
-  <p class="label">Ytterligare information:</p>
-  <textarea name="InvestigatorInfo" rows="5" cols="60"></textarea>
-
-  <p class="label">Händelser:</p>
-  <textarea name="InvestigatorAction" rows="5" cols="60"></textarea>
-
-  <p class="label">Prover:</p>
-  <input type="file" name="Sample">
-
-  <p class="label">Ladda upp bilder:</p>
-  <input type="file" name="Picture">
-
-  <p class="label">Ändring av status:</p>
-  <select name="StatusId">
-    <option selected="selected">Välj</option>
-    @foreach (ErrandStatus status in Model)
-    {
-      <option value="@status.StatusId">@status.StatusName</option>
-    }
-  </select>
-
-  <p><input class="button" type="submit" value="Spara"></p>
+  <form asp-controller="Investigator" asp-action="SaveInvestigator" method="post" enctype="multipart/form-data">
+    <label asp-for="InvestigatorInfo" class="label">Ytterligare information:</label>
+    <br /><br />
+    <textarea asp-for="InvestigatorInfo" rows="5" cols="60"></textarea>
+    <br /><br />
+    <label asp-for="InvestigatorAction" class="label">Händelser:</label>
+    <br /><br />
+    <textarea asp-for="InvestigatorAction" rows="5" cols="60"></textarea>
+    <br /><br />
+    <label asp-for="Sample" class="label">Prover (en i taget, spara):</label>
+    <br /><br />
+    <input asp-for="Sample" type="file">
+    <br /><br />
+    <label asp-for="Picture" class="label">Ladda upp bilder (en i taget, spara):</label>
+    <br /><br />
+    <input asp-for="Picture" type="file">
+    <br /><br />
+    <label asp-for="StatusId" class="label">Ändring av status:</label>
+    <br /><br />
+    <select asp-for="StatusId" asp-items="Model.ErrandStatus">
+      <option value="">Välj</option>
+    </select>
+    <p><input class="button" type="submit" value="Spara"></p>
+  </form>
 </section>

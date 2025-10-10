@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace EnvironmentCrime.Models
 {
   /**
@@ -29,5 +30,9 @@ namespace EnvironmentCrime.Models
     public string? StatusId { get; set; }
     public string? DepartmentId { get; set; }
     public string? EmployeeId { get; set; }
+    [NotMapped]
+    public ICollection<Sample>? Samples { get; set; } = [];
+    [NotMapped]
+    public ICollection<Picture>? Pictures { get; set; } = [];
   }
 }

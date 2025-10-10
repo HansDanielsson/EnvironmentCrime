@@ -10,6 +10,8 @@
     IQueryable<Employee> Employees { get; }
     IQueryable<Errand> Errands { get; }
     IQueryable<ErrandStatus> ErrandStatuses { get; }
+    IQueryable<Picture> Pictures { get; }
+    IQueryable<Sample> Samples { get; }
     IQueryable<Sequence> Sequences { get; }
 
     /**
@@ -29,12 +31,14 @@
      *         False - Error
      */
     Task<bool> SaveErrandAsync(Errand errand);
+    
     /**
      * Create:
      * Insert an new errand
      * Return: New RefNumber or error message
      */
     Task<string> SaveNewErrandAsync(Errand errand);
+    Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile);
 
     /**
      * Update: (Not used atm.)

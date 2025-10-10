@@ -14,6 +14,8 @@ namespace EnvironmentCrime.Models
     public IQueryable<Employee> Employees => context.Employees;
     public IQueryable<Errand> Errands => context.Errands;
     public IQueryable<ErrandStatus> ErrandStatuses => context.ErrandStatuses;
+    public IQueryable<Picture> Pictures => context.Pictures;
+    public IQueryable<Sample> Samples => context.Samples;
     public IQueryable<Sequence> Sequences => context.Sequences;
 
     /**
@@ -21,26 +23,42 @@ namespace EnvironmentCrime.Models
      */
     public async Task<ErrandInfo> GetErrandDetail(int errandid)
     {
-      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
+      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid);
+      if (errand == null)
+      {
+        throw new InvalidOperationException("Errand not found " + errandid);
+      }
+
+      // Collect saples if it exist.
+      errand.Samples!.Clear();
+      var samples = context.Samples.Where(sa => sa.ErrandId == errandid);
+      foreach (var sample in samples)
+      {
+        errand.Samples!.Add(sample);
+      }
+      
+      // Collect pictures if it exist.
+      errand.Pictures!.Clear();
+      var pictures = context.Pictures.Where(pi => pi.ErrandId == errandid);
+      foreach (var picture in pictures)
+      {
+        errand.Pictures!.Add(picture);
+      }
+
       /**
        * Database contains only the Ids for Status, Department and Employee in key fields.
        * lookup the names from the related collections and add to the ViewModel
        */
-      var es = await ErrandStatuses.FirstOrDefaultAsync(st => st.StatusId == errand.StatusId);
-      string sName = es == null ? "Inte angivet" : es.StatusName!;
-
-      var dep = await Departments.FirstOrDefaultAsync(dep => dep.DepartmentId == errand.DepartmentId);
-      string dName = dep == null ? "Inte angivet" : dep.DepartmentName!;
-
-      var emp = await Employees.FirstOrDefaultAsync(emp => emp.EmployeeId == errand.EmployeeId);
-      string eName = emp == null ? "Inte angivet" : emp.EmployeeName!;
+      ErrandStatus? es = await ErrandStatuses.FirstOrDefaultAsync(st => st.StatusId == errand.StatusId);
+      Department? dep = await Departments.FirstOrDefaultAsync(dep => dep.DepartmentId == errand.DepartmentId);
+      Employee? emp = await Employees.FirstOrDefaultAsync(emp => emp.EmployeeId == errand.EmployeeId);
 
       ErrandInfo viewModel = new()
       {
         Errands = errand,
-        StatusName = sName,
-        DepartmentName = dName,
-        EmployeeName = eName
+        StatusName = (es == null) ? "Inte angivet" : es.StatusName!,
+        DepartmentName = (dep == null) ? "Inte angivet" : dep.DepartmentName!,
+        EmployeeName = (emp == null) ? "Inte angivet" : emp.EmployeeName!
       };
       return viewModel;
     }
@@ -49,10 +67,11 @@ namespace EnvironmentCrime.Models
      */
     public async Task<Sequence> GetSequenceAsync(int seqid)
     {
-      return await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid) ?? throw new InvalidOperationException("Sequence not found " + seqid);
+      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
+      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
     }
     /**
-     * Update: (Not used atm)
+     * Update:
      * Update a errand to the repository.
      * Return: True - db insert/update
      *         False - Error
@@ -64,7 +83,7 @@ namespace EnvironmentCrime.Models
         Errand? dbEntry = await context.Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errand.ErrandId);
         if (dbEntry == null)
         {
-          await context.Errands.AddAsync(errand);
+          await context.Errands.AddAsync(errand); // Insert new record.
         }
         else
         { // Only change special info.
@@ -114,6 +133,32 @@ namespace EnvironmentCrime.Models
         // All error is ignored
       }
       return "Error in SaveNewErrandAsync";
+    }
+    public async Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile)
+    {
+      if (string.IsNullOrWhiteSpace(recordModel) || string.IsNullOrWhiteSpace(pathFile))
+        return false;
+
+      try
+      {
+        object? entity = recordModel.ToLowerInvariant() switch
+        {
+          "sample" => new Sample { ErrandId = errandId, SampleName = pathFile },
+          "picture" => new Picture { ErrandId = errandId, PictureName = pathFile },
+          _ => null
+        };
+
+        if (entity == null)
+          return false;
+
+        context.Add(entity); // Insert new record in db.
+        await context.SaveChangesAsync();
+        return true;
+      }
+      catch
+      {
+        return false;
+      }
     }
     /**
      * Update: (Not used atm.)

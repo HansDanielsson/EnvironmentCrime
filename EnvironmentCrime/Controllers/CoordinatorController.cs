@@ -36,6 +36,7 @@ namespace EnvironmentCrime.Controllers
       HttpContext.Session.Remove("CoordinatorCrime");
       return View();
     }
+
     /**
      * The Validate action method handles the submission of the errand form.
      * It receives an Errand object populated with user input and returns a view
@@ -44,9 +45,23 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public ViewResult Validate(Errand errand)
     {
-      // Save user input errand to session
+      // Save user input errand to session CoordinatorCrime
       HttpContext.Session.Set("CoordinatorCrime", errand);
       return View(errand);
+    }
+    /**
+     * Administrator can update the department key.
+     */
+    [HttpPost]
+    public async Task<IActionResult> SaveDepartment(string DepartmentId)
+    {
+      if (DepartmentId != null && DepartmentId != "Välj")
+      {
+        Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
+        errand.DepartmentId = DepartmentId; // Change department
+        await repository.SaveErrandAsync(errand);
+      }
+      return RedirectToAction("StartCoordinator");
     }
   }
 }
