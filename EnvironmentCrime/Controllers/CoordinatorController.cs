@@ -49,7 +49,9 @@ namespace EnvironmentCrime.Controllers
       HttpContext.Session.Set("CoordinatorCrime", errand);
       return View(errand);
     }
-
+    /**
+     * Administrator can update the department key.
+     */
     [HttpPost]
     public async Task<IActionResult> SaveDepartment(string DepartmentId)
     {

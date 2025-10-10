@@ -29,6 +29,7 @@ namespace EnvironmentCrime.Models
         throw new InvalidOperationException("Errand not found " + errandid);
       }
 
+      // Collect saples if it exist.
       errand.Samples!.Clear();
       var samples = context.Samples.Where(sa => sa.ErrandId == errandid);
       foreach (var sample in samples)
@@ -36,6 +37,7 @@ namespace EnvironmentCrime.Models
         errand.Samples!.Add(sample);
       }
       
+      // Collect pictures if it exist.
       errand.Pictures!.Clear();
       var pictures = context.Pictures.Where(pi => pi.ErrandId == errandid);
       foreach (var picture in pictures)
@@ -81,7 +83,7 @@ namespace EnvironmentCrime.Models
         Errand? dbEntry = await context.Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errand.ErrandId);
         if (dbEntry == null)
         {
-          await context.Errands.AddAsync(errand);
+          await context.Errands.AddAsync(errand); // Insert new record.
         }
         else
         { // Only change special info.
@@ -149,7 +151,7 @@ namespace EnvironmentCrime.Models
         if (entity == null)
           return false;
 
-        context.Add(entity);
+        context.Add(entity); // Insert new record in db.
         await context.SaveChangesAsync();
         return true;
       }

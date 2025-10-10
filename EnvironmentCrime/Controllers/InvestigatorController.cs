@@ -38,6 +38,9 @@ namespace EnvironmentCrime.Controllers
       return View(repository);
     }
 
+    /**
+     * Private help function to save upload files to correct dir.
+     */
     private async Task SaveFileAsync(int errandId, string dirPath, IFormFile? file)
     {
       if (file is not { FileName: not null, Length: > 0 })
@@ -51,7 +54,7 @@ namespace EnvironmentCrime.Controllers
 
       await using var stream = new FileStream(fullPath, FileMode.Create);
       await file.CopyToAsync(stream);
-      await repository.InsertFileAsync(dirPath, errandId, uniqueFileSample);
+      await repository.InsertFileAsync(dirPath, errandId, uniqueFileSample); // Save to database
     }
 
     /**

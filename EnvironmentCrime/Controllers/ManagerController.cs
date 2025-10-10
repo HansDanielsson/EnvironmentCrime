@@ -11,6 +11,7 @@ namespace EnvironmentCrime.Controllers
     public ManagerController(IERepository repo) => repository = repo;
     public ViewResult CrimeManager(int id)
     {
+      // Load Employess from database record
       SaveManagerViewModel viewModel = new()
       {
         Employees = [.. repository.Employees.Select(static e => new SelectListItem
@@ -27,6 +28,9 @@ namespace EnvironmentCrime.Controllers
     {
       return View(repository);
     }
+    /*
+     * Update errand with user input.
+     */
     [HttpPost]
     public async Task<IActionResult> SaveManager(SaveManagerViewModel model)
     {
@@ -39,12 +43,12 @@ namespace EnvironmentCrime.Controllers
           {
             errand.InvestigatorInfo = model.InvestigatorInfo;
             errand.StatusId = "S_B";
-            errand.EmployeeId = "";
+            errand.EmployeeId = ""; // remove
           }
         }
         else if (!string.IsNullOrEmpty(model.EmployeeId))
         {
-          errand.EmployeeId = model.EmployeeId;
+          errand.EmployeeId = model.EmployeeId; // Update
         }
         await repository.SaveErrandAsync(errand);
       }
