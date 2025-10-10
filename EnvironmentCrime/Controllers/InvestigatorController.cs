@@ -14,10 +14,9 @@ namespace EnvironmentCrime.Controllers
       repository = repo;
       environment = env;
     }
-
-    /**
-* Show one Errand with id
-*/
+    /*
+     * Show errand with id number.
+     */
     public ViewResult CrimeInvestigator(int id)
     {
       SaveInvestigatorViewModel viewModel = new()
@@ -39,7 +38,7 @@ namespace EnvironmentCrime.Controllers
       return View(repository);
     }
 
-    private async Task SaveFileAsync(int ErrandId, string dirPath, IFormFile? file)
+    private async Task SaveFileAsync(int errandId, string dirPath, IFormFile? file)
     {
       if (file is not { FileName: not null, Length: > 0 })
         return;
@@ -52,8 +51,7 @@ namespace EnvironmentCrime.Controllers
 
       await using var stream = new FileStream(fullPath, FileMode.Create);
       await file.CopyToAsync(stream);
-      await repository.InsertFileAsync(dirPath, ErrandId, fullPath);
-
+      await repository.InsertFileAsync(dirPath, errandId, uniqueFileSample);
     }
 
     /**

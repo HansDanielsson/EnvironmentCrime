@@ -24,7 +24,26 @@ namespace EnvironmentCrime.Models
      */
     public async Task<ErrandInfo> GetErrandDetail(int errandid)
     {
-      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
+      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid);
+      if (errand == null)
+      {
+        throw new InvalidOperationException("Errand not found " + errandid);
+      }
+
+      errand.Samples!.Clear();
+      var samples = context.Samples.Where(sa => sa.ErrandId == errandid);
+      foreach (var sample in samples)
+      {
+        errand.Samples!.Add(sample);
+      }
+      
+      errand.Pictures!.Clear();
+      var pictures = context.Pictures.Where(pi => pi.ErrandId == errandid);
+      foreach (var picture in pictures)
+      {
+        errand.Pictures!.Add(picture);
+      }
+
       /**
        * Database contains only the Ids for Status, Department and Employee in key fields.
        * lookup the names from the related collections and add to the ViewModel
