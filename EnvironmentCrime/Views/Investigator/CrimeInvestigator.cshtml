@@ -9,7 +9,7 @@
 
 <section id="bottomColumn">
   <h3>Redigera ärende</h3>
-  <form asp-controller="Investigator" asp-action="SaveInvestigator" method="post" enctype="multipart/form-data" multiple>
+  <form asp-controller="Investigator" asp-action="SaveInvestigator" method="post" enctype="multipart/form-data">
     <label asp-for="InvestigatorInfo" class="label">Ytterligare information:</label>
     <br /><br />
     <textarea asp-for="InvestigatorInfo" rows="5" cols="60"></textarea>
@@ -18,11 +18,11 @@
     <br /><br />
     <textarea asp-for="InvestigatorAction" rows="5" cols="60"></textarea>
     <br /><br />
-    <label asp-for="Sample" class="label">Prover:</label>
+    <label asp-for="Sample" class="label">Prover (en i taget, spara):</label>
     <br /><br />
     <input asp-for="Sample" type="file">
     <br /><br />
-    <label asp-for="Picture" class="label">Ladda upp bilder:</label>
+    <label asp-for="Picture" class="label">Ladda upp bilder (en i taget, spara):</label>
     <br /><br />
     <input asp-for="Picture" type="file">
     <br /><br />
