@@ -1,0 +1,21 @@
+﻿@{
+  var role = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<h2>Tack för din anmälan</h2>
+<p class="info">@ViewBag.msg1</p>
+
+<p>
+  Anmälan har nu skickats in till kommunen och kommer att utredas.<br>
+  Vill du komplettera din anmälan kontakta oss via mail eller telefon.<br>
+  Ange då nummer: @ViewBag.RefNumber
+</p>
+<p>
+  @if (role == "Coordinator")
+  {
+    <a asp-controller="Coordinator" asp-action="StartCoordinator" class="button">Avsluta rapporteringen</a>
+  }
+  else
+  {
+    <a asp-controller="Home" asp-action="Index" class="button">Avsluta rapporteringen</a>
+  }
+</p>
