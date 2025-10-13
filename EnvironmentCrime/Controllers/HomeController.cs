@@ -11,9 +11,5 @@ namespace EnvironmentCrime.Controllers
       Errand? myErrand = HttpContext.Session.Get<Errand>("IndexCrime");
       return myErrand == null ? View() : View(myErrand);
     }
-    public ViewResult Login()
-    {
-      return View();
-    }
   }
 }

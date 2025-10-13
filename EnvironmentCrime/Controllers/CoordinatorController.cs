@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EnvironmentCrime.Models;
 using EnvironmentCrime.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EnvironmentCrime.Controllers
 {
+  [Authorize(Roles = "Coordinator")]
   public class CoordinatorController : Controller
   {
     private readonly IERepository repository;
