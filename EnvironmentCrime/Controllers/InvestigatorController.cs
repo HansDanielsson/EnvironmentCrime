@@ -28,9 +28,9 @@ namespace EnvironmentCrime.Controllers
       ViewBag.errandId = id;
       return View();
     }
-    public async Task<ViewResult> StartInvestigator()
+    public async Task<ViewResult> StartInvestigator(DropDownViewModel dropDown)
     {
-      List<MyErrand> investigatorList = await repository.GetInvestigatorAsync();
+      List<MyErrand> investigatorList = await repository.GetInvestigatorAsync(dropDown);
       return View(investigatorList);
     }
 
@@ -84,6 +84,11 @@ namespace EnvironmentCrime.Controllers
         await repository.SaveErrandAsync(errand);
       }
       return RedirectToAction("StartInvestigator");
+    }
+    public IActionResult SelectDropDown(DropDownViewModel dropDown)
+    {
+      
+      return RedirectToAction("StartInvestigator", dropDown);
     }
   }
 }

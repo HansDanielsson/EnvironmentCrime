@@ -10,6 +10,9 @@ namespace EnvironmentCrime.Controllers
   {
     private readonly IERepository repository;
     public CoordinatorController(IERepository repo) => repository = repo;
+    /*
+     * Show errand with id number.
+     */
     public ViewResult CrimeCoordinator(int id)
     {
       // Pass the errandId to the view using ViewBag
@@ -22,9 +25,9 @@ namespace EnvironmentCrime.Controllers
       return myErrand == null ? View() : View(myErrand);
     }
 
-    public async Task<ViewResult> StartCoordinator()
+    public async Task<ViewResult> StartCoordinator(DropDownViewModel dropDown)
     {
-      List<MyErrand> cordinatorList = await repository.GetCoordinatorAsync();
+      List<MyErrand> cordinatorList = await repository.GetCoordinatorAsync(dropDown);
       return View(cordinatorList);
     }
 
@@ -48,8 +51,15 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public ViewResult Validate(Errand errand)
     {
-      // Save user input errand to session CoordinatorCrime
-      HttpContext.Session.Set("CoordinatorCrime", errand);
+      if (ModelState.IsValid)
+      {
+        // Save user input errand to session CoordinatorCrime
+        HttpContext.Session.Set("CoordinatorCrime", errand);
+      }
+      else
+      {
+        ModelState.AddModelError("", "Nu blev det något fel!");
+      }
       return View(errand);
     }
     /**
@@ -65,6 +75,10 @@ namespace EnvironmentCrime.Controllers
         await repository.SaveErrandAsync(errand);
       }
       return RedirectToAction("StartCoordinator");
+    }
+    public IActionResult SelectDropDown(DropDownViewModel dropDown)
+    {
+      return RedirectToAction("StartCoordinator", dropDown);
     }
   }
 }

@@ -29,9 +29,9 @@ namespace EnvironmentCrime.Controllers
       ViewBag.errandId = id;
       return View();
     }
-    public async Task<ViewResult> StartManager()
+    public async Task<ViewResult> StartManager(DropDownViewModel dropDown)
     {
-      List<MyErrand> managerList = await repository.GetManagerAsync();
+      List<MyErrand> managerList = await repository.GetManagerAsync(dropDown);
       return View(managerList);
     }
     /*
@@ -59,6 +59,10 @@ namespace EnvironmentCrime.Controllers
         await repository.SaveErrandAsync(errand);
       }
       return RedirectToAction("StartManager");
+    }
+    public IActionResult SelectDropDown(DropDownViewModel dropDown)
+    {
+      return RedirectToAction("StartManager", dropDown);
     }
   }
 }

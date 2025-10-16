@@ -81,7 +81,7 @@ namespace EnvironmentCrime.Models
     /**
      * Get an List of MyErrand with all errands
      */
-    public async Task<List<MyErrand>> GetCoordinatorAsync()
+    public async Task<List<MyErrand>> GetCoordinatorAsync(DropDownViewModel dropDown)
     {
       List<MyErrand> errandList = await (from err in Errands
                                          join stat in ErrandStatuses on err.StatusId equals stat.StatusId
@@ -105,7 +105,7 @@ namespace EnvironmentCrime.Models
     /**
      * For Investigator: Get an List of MyErrand on department unit
      */
-    public async Task<List<MyErrand>> GetInvestigatorAsync()
+    public async Task<List<MyErrand>> GetInvestigatorAsync(DropDownViewModel dropDown)
     {
       string userName = "E202";
       var errandList = await (from err in Errands
@@ -131,7 +131,7 @@ namespace EnvironmentCrime.Models
     /**
      * For Manager: Get an List of MyErrand on department unit
      */
-    public async Task<List<MyErrand>> GetManagerAsync()
+    public async Task<List<MyErrand>> GetManagerAsync(DropDownViewModel dropDown)
     {
       string userName = "E103";
       string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
