@@ -24,7 +24,7 @@ namespace EnvironmentCrime.Controllers
 
     public async Task<ViewResult> StartCoordinator()
     {
-      var cordinatorList = await repository.GetCoordinatorAsync();
+      List<MyErrand> cordinatorList = await repository.GetCoordinatorAsync();
       return View(cordinatorList);
     }
 

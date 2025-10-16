@@ -19,10 +19,10 @@ namespace EnvironmentCrime.Controllers
     /*
      * Show errand with id number.
      */
-    public ViewResult CrimeInvestigator(int id)
+    public async Task<ViewResult> CrimeInvestigator(int id)
     {
-      ViewBag.ListOfStatus = repository.ErrandStatuses
-        .Where(e => e.StatusId == "S_C" || e.StatusId == "S_D").ToList(); // Only "påbörjad" and "klar"
+      ViewBag.ListOfStatus = await repository.ErrandStatuses
+        .Where(e => e.StatusId == "S_C" || e.StatusId == "S_D").ToListAsync(); // Only "påbörjad" and "klar"
 
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
@@ -30,7 +30,7 @@ namespace EnvironmentCrime.Controllers
     }
     public async Task<ViewResult> StartInvestigator()
     {
-      var investigatorList = await repository.GetInvestigatorAsync();
+      List<MyErrand> investigatorList = await repository.GetInvestigatorAsync();
       return View(investigatorList);
     }
 
@@ -64,12 +64,12 @@ namespace EnvironmentCrime.Controllers
       {
         Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
 
-        if (!string.IsNullOrEmpty(model.InvestigatorInfo))
+        if (!string.IsNullOrWhiteSpace(model.InvestigatorInfo))
         {
           errand.InvestigatorInfo += " " + model.InvestigatorInfo; // Add text
         }
 
-        if (!string.IsNullOrEmpty(model.InvestigatorAction))
+        if (!string.IsNullOrWhiteSpace(model.InvestigatorAction))
         {
           errand.InvestigatorAction += " " + model.InvestigatorAction; // Add text
         }
@@ -77,7 +77,7 @@ namespace EnvironmentCrime.Controllers
         await SaveFileAsync(errand.ErrandId, "sample", model.Sample);
         await SaveFileAsync(errand.ErrandId, "picture", model.Picture);
 
-        if (!string.IsNullOrEmpty(model.StatusId))
+        if (!string.IsNullOrWhiteSpace(model.StatusId) && model.StatusId != "Välj")
         {
           errand.StatusId = model.StatusId;
         }

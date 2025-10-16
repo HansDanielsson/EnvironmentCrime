@@ -97,8 +97,8 @@ namespace EnvironmentCrime.Models
                                            RefNumber = err.RefNumber!,
                                            TypeOfCrime = err.TypeOfCrime,
                                            StatusName = stat.StatusName!,
-                                           DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                           EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                           DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                           EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                                          }).ToListAsync();
       return errandList;
     }
@@ -123,8 +123,8 @@ namespace EnvironmentCrime.Models
                                 RefNumber = err.RefNumber!,
                                 TypeOfCrime = err.TypeOfCrime,
                                 StatusName = stat.StatusName!,
-                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                               }).ToListAsync();
       return errandList;
     }
@@ -150,8 +150,8 @@ namespace EnvironmentCrime.Models
                                 RefNumber = err.RefNumber!,
                                 TypeOfCrime = err.TypeOfCrime,
                                 StatusName = stat.StatusName!,
-                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                               }).ToListAsync();
       return errandList;
     }
@@ -189,8 +189,8 @@ namespace EnvironmentCrime.Models
                                 Samples = err.Samples,
                                 Pictures = err.Pictures,
                                 StatusName = stat.StatusName,
-                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                               }).FirstOrDefaultAsync();
 
       if (errand == null)
