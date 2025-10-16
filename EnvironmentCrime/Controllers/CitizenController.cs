@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
-
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {

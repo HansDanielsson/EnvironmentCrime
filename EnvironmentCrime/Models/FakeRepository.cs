@@ -75,43 +75,143 @@ namespace EnvironmentCrime.Models
       {
         new() { Id = 1, CurrentValue = 200 }
       }.AsQueryable();
-
+    /**
+     * Read:
+     */
+    /**
+     * Get an List of MyErrand with all errands
+     */
+    public async Task<List<MyErrand>> GetCoordinatorAsync()
+    {
+      List<MyErrand> errandList = await (from err in Errands
+                                         join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                                         join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                                         from deptE in departmentErrand.DefaultIfEmpty()
+                                         join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                                         from empE in employeeErrand.DefaultIfEmpty()
+                                         orderby err.RefNumber descending
+                                         select new MyErrand
+                                         {
+                                           DateOfObservation = err.DateOfObservation,
+                                           ErrandId = err.ErrandId,
+                                           RefNumber = err.RefNumber!,
+                                           TypeOfCrime = err.TypeOfCrime,
+                                           StatusName = stat.StatusName!,
+                                           DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                           EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                         }).ToListAsync();
+      return errandList;
+    }
+    /**
+     * For Investigator: Get an List of MyErrand on department unit
+     */
+    public async Task<List<MyErrand>> GetInvestigatorAsync()
+    {
+      string userName = "E202";
+      var errandList = await (from err in Errands
+                              where err.EmployeeId == userName
+                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                              from deptE in departmentErrand.DefaultIfEmpty()
+                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                              from empE in employeeErrand.DefaultIfEmpty()
+                              orderby err.RefNumber descending
+                              select new MyErrand
+                              {
+                                DateOfObservation = err.DateOfObservation,
+                                ErrandId = err.ErrandId,
+                                RefNumber = err.RefNumber!,
+                                TypeOfCrime = err.TypeOfCrime,
+                                StatusName = stat.StatusName!,
+                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                              }).ToListAsync();
+      return errandList;
+    }
+    /**
+     * For Manager: Get an List of MyErrand on department unit
+     */
+    public async Task<List<MyErrand>> GetManagerAsync()
+    {
+      string userName = "E103";
+      string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
+      var errandList = await (from err in Errands
+                              where err.DepartmentId == userDepartmentId
+                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                              from deptE in departmentErrand.DefaultIfEmpty()
+                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                              from empE in employeeErrand.DefaultIfEmpty()
+                              orderby err.RefNumber descending
+                              select new MyErrand
+                              {
+                                DateOfObservation = err.DateOfObservation,
+                                ErrandId = err.ErrandId,
+                                RefNumber = err.RefNumber!,
+                                TypeOfCrime = err.TypeOfCrime,
+                                StatusName = stat.StatusName!,
+                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                              }).ToListAsync();
+      return errandList;
+    }
+    public async Task<List<ErrandStatus>> GetErrandStatusAsync()
+    {
+      return await ErrandStatuses.ToListAsync();
+    }
     /**
      * Get single errand with details
      */
-    public async Task<ErrandInfo> GetErrandDetail(int errandid)
+    public async Task<Errand> GetErrandDetailAsync(int errandId)
     {
+      Errand? errand = await (from err in Errands
+                              where err.ErrandId == errandId
+                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                              from deptE in departmentErrand.DefaultIfEmpty()
+                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                              from empE in employeeErrand.DefaultIfEmpty()
+                              select new Errand
+                              {
+                                ErrandId = err.ErrandId,
+                                RefNumber = err.RefNumber,
+                                Place = err.Place,
+                                TypeOfCrime = err.TypeOfCrime,
+                                DateOfObservation = err.DateOfObservation,
+                                InformerName = err.InformerName,
+                                InformerPhone = err.InformerPhone,
+                                Observation = err.Observation,
+                                InvestigatorInfo = err.InvestigatorInfo,
+                                InvestigatorAction = err.InvestigatorAction,
+                                StatusId = err.StatusId,
+                                DepartmentId = err.DepartmentId,
+                                EmployeeId = err.EmployeeId,
+                                Samples = err.Samples,
+                                Pictures = err.Pictures,
+                                StatusName = stat.StatusName,
+                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                              }).FirstOrDefaultAsync();
 
-      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
-      /**
-       * Database contains only the Ids for Status, Department and Employee in key fields.
-       * * lookup the names from the related collections and add to the ViewModel
-       */
-      var es = await ErrandStatuses.FirstOrDefaultAsync(st => st.StatusId == errand.StatusId);
-      string sName = es == null ? "Inte angivet" : es.StatusName!;
-
-      var dep = await Departments.FirstOrDefaultAsync(dep => dep.DepartmentId == errand.DepartmentId);
-      string dName = dep == null ? "Inte angivet" : dep.DepartmentName!;
-
-      var emp = await Employees.FirstOrDefaultAsync(emp => emp.EmployeeId == errand.EmployeeId);
-      string eName = emp == null ? "Inte angivet" : emp.EmployeeName!;
-
-      ErrandInfo viewModel = new()
+      if (errand == null)
       {
-        Errands = errand,
-        StatusName = sName,
-        DepartmentName = dName,
-        EmployeeName = eName
-      };
-      return viewModel;
+        throw new InvalidOperationException("Errand not found " + errandId);
+      }
+
+      return errand;
     }
     /**
      * Get single sequense with details
      */
-    public async Task<Sequence> GetSequenceAsync(int seqid)
+    public async Task<Sequence> GetSequenceAsync(int seqId)
     {
-      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
-      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
+      Sequence? seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqId);
+      if (seq == null)
+      {
+        throw new InvalidOperationException("Sequence not found " + seqId);
+      }
+
+      return seq;
     }
     /**
      * Update:

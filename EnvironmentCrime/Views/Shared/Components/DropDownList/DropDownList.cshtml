@@ -1,0 +1,50 @@
+﻿@model DropDownViewModel
+@{
+  var role = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<h2>Ärenden</h2>
+<p class="info">Du är inloggad som @ViewBag.msg1</p>
+<form asp-controller="@role" asp-action="SaveDropDown" method="post">
+  <table id="managerForm">
+    <tr>
+      <td class="label">Välj status:</td>
+      @if (role == "Coordinator")
+      {
+        <td class="label">Välj avdelning:</td>
+      }
+      else if (role == "Manager")
+      {
+        <td class="label">Välj handläggare:</td>
+      }
+      <td>&nbsp;</td>
+      <td class="label">Ärendenummer:</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>
+        <select asp-for="StatusId" asp-items="@(new SelectList(ViewBag.ErrandStatus, "StatusId", "StatusName"))">
+          <option>Välj alla</option>
+        </select>
+      </td>
+      @if (role == "Coordinator")
+      {
+        <td>
+          <select asp-for="DepartmentId" asp-items="@(new SelectList(ViewBag.Department, "DepartmentId", "DepartmentName"))">
+            <option>Välj alla</option>
+          </select>
+        </td>
+      }
+      else if (role == "Manager")
+      {
+        <td>
+          <select asp-for="EmployeeId" asp-items="@(new SelectList(ViewBag.Employee, "EmployeeId", "EmployeeName"))">
+            <option>Välj alla</option>
+          </select>
+        </td>
+      }
+      <td><input class="button" type="submit" value="Hämta lista"></td>
+      <td><input asp-for="RefNumber"></td>
+      <td><input class="button" type="submit" value="Sök"></td>
+    </tr>
+  </table>
+</form>

@@ -15,14 +15,22 @@
     IQueryable<Sequence> Sequences { get; }
 
     /**
+     * Get items in List.
+     */
+    Task<List<MyErrand>> GetCoordinatorAsync();
+    Task<List<MyErrand>> GetInvestigatorAsync();
+    Task<List<MyErrand>> GetManagerAsync();
+    Task<List<ErrandStatus>> GetErrandStatusAsync();
+
+    /**
      * Get single errand with details
      */
-    Task<ErrandInfo> GetErrandDetail(int errandid);
+    Task<Errand> GetErrandDetailAsync(int errandId);
 
     /**
      * Get single sequense with details
      */
-    Task<Sequence> GetSequenceAsync(int seqid);
+    Task<Sequence> GetSequenceAsync(int seqId);
 
     /**
      * Update: (Not used atm)

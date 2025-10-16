@@ -8,19 +8,19 @@
 @await Component.InvokeAsync("ShowOneCrime", ViewBag.errandId)
 
 <section id="bottomColumn">
-  <h3>Redigera ärende</h3>
   <form asp-controller="Manager" asp-action="SaveManager" method="post">
     <p>
-      Ange handläggare:
-      <select asp-for="EmployeeId" asp-items="Model.Employees">
-        <option value="">Välj</option>
+      <h3>Redigera ärende</h3>
+      <label asp-for="EmployeeId"></label>
+      <select asp-for="EmployeeId" asp-items="@(new SelectList(ViewBag.ListOfEmployee, "EmployeeId", "EmployeeName"))">
+        <option>Välj</option>
       </select>
     </p>
     <p>
       <input asp-for="NoAction" type="checkbox" />
-      <label asp-for="NoAction">Ingen åtgärd:</label>
-      <input asp-for="InvestigatorInfo" type="text" placeholder="Ange motivering" />
+      <label asp-for="NoAction"></label>
+      <input asp-for="InvestigatorInfo" placeholder="Ange motivering" />
     </p>
-    <p><input class="button" type="submit" value="Spara"></p>
+    <input class="button" type="submit" value="Spara">
   </form>
 </section>

@@ -1,20 +1,13 @@
 ﻿@{
   Layout = "_HeaderLayout";
   var role = ViewContext.RouteData.Values["controller"]?.ToString();
+  var aspaction = "Start" + role;
 }
 <nav>
   <ul>
-    @if (role == "Manager")
+    <li><a asp-controller="@role" asp-action="@aspaction" class="reports">Start(Ärenden)</a></li>
+    @if (role == "Coordinator")
     {
-      <li><a asp-controller="Manager" asp-action="StartManager" class="reports">Start(Ärenden)</a></li>
-    }
-    else if (role == "Investigator")
-    {
-      <li><a asp-controller="Investigator" asp-action="StartInvestigator" class="reports">Start(Ärenden)</a></li>
-    }
-    else
-    {
-      <li><a asp-controller="Coordinator" asp-action="StartCoordinator" class="reports">Start(Ärenden)</a></li>
       <li><a asp-controller="Coordinator" asp-action="ReportCrime" class="reportAdd">Rapportera brott</a></li>
     }
     <li class="right"><a asp-controller="Account" asp-action="Logout" class="logout">Logga ut</a></li>

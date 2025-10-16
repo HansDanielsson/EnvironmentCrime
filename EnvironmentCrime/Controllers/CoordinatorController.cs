@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
@@ -22,9 +22,10 @@ namespace EnvironmentCrime.Controllers
       return myErrand == null ? View() : View(myErrand);
     }
 
-    public ViewResult StartCoordinator()
+    public async Task<ViewResult> StartCoordinator()
     {
-      return View(repository);
+      var cordinatorList = await repository.GetCoordinatorAsync();
+      return View(cordinatorList);
     }
 
     public async Task<ViewResult> Thanks()

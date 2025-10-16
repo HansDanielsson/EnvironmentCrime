@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnvironmentCrime.Controllers
 {
@@ -21,23 +21,17 @@ namespace EnvironmentCrime.Controllers
      */
     public ViewResult CrimeInvestigator(int id)
     {
-      SaveInvestigatorViewModel viewModel = new()
-      {
-        ErrandStatus = [.. repository.ErrandStatuses
-        .Where(static e => e.StatusId == "S_C" || e.StatusId == "S_D") // Only "påbörjad" and "klar"
-        .Select(static e => new SelectListItem
-        {
-          Value = e.StatusId,
-          Text = e.StatusName
-        })]
-      };
+      ViewBag.ListOfStatus = repository.ErrandStatuses
+        .Where(e => e.StatusId == "S_C" || e.StatusId == "S_D").ToList(); // Only "påbörjad" and "klar"
+
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
-      return View(viewModel);
+      return View();
     }
-    public ViewResult StartInvestigator()
+    public async Task<ViewResult> StartInvestigator()
     {
-      return View(repository);
+      var investigatorList = await repository.GetInvestigatorAsync();
+      return View(investigatorList);
     }
 
     /**

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnvironmentCrime.Controllers
 {
@@ -14,21 +14,16 @@ namespace EnvironmentCrime.Controllers
     public ViewResult CrimeManager(int id)
     {
       // Load Employess from database record
-      SaveManagerViewModel viewModel = new()
-      {
-        Employees = [.. repository.Employees.Select(static e => new SelectListItem
-        {
-          Value = e.EmployeeId,
-          Text = e.EmployeeName
-        })]
-      };
+      ViewBag.ListOfEmployee = repository.Employees.ToList();
+      
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
-      return View(viewModel);
+      return View();
     }
-    public ViewResult StartManager()
+    public async Task<ViewResult> StartManager()
     {
-      return View(repository);
+      List<MyErrand> managerList = await repository.GetManagerAsync();
+      return View(managerList);
     }
     /*
      * Update errand with user input.

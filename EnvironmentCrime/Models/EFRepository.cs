@@ -9,66 +9,165 @@ namespace EnvironmentCrime.Models
      * Queryable collections for each entity type.
      */
     private readonly ApplicationDbContext context;
-    public EFRepository(ApplicationDbContext ctx) => context = ctx;
+    private readonly IHttpContextAccessor contextAcc;
+    public EFRepository(ApplicationDbContext ctx, IHttpContextAccessor cont)
+    {
+      context = ctx;
+      contextAcc = cont;
+    }
+
     public IQueryable<Department> Departments => context.Departments;
     public IQueryable<Employee> Employees => context.Employees;
     public IQueryable<Errand> Errands => context.Errands;
+    /**
+      .Include(e => e.Samples).Include(e => e.Pictures);
+    */
     public IQueryable<ErrandStatus> ErrandStatuses => context.ErrandStatuses;
     public IQueryable<Picture> Pictures => context.Pictures;
     public IQueryable<Sample> Samples => context.Samples;
     public IQueryable<Sequence> Sequences => context.Sequences;
 
     /**
+     * Read:
+     */
+    /**
+     * Get an List of MyErrand with all errands
+     */
+    public async Task<List<MyErrand>> GetCoordinatorAsync()
+    {
+      List<MyErrand> errandList = await (from err in Errands
+                                         join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                                         join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                                         from deptE in departmentErrand.DefaultIfEmpty()
+                                         join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                                         from empE in employeeErrand.DefaultIfEmpty()
+                                         orderby err.RefNumber descending
+                                         select new MyErrand
+                                         {
+                                           DateOfObservation = err.DateOfObservation,
+                                           ErrandId = err.ErrandId,
+                                           RefNumber = err.RefNumber!,
+                                           TypeOfCrime = err.TypeOfCrime,
+                                           StatusName = stat.StatusName!,
+                                           DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                           EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                         }).ToListAsync();
+      return errandList;
+    }
+    /**
+     * For Investigator: Get an List of MyErrand on employeet unit
+     */
+    public async Task<List<MyErrand>> GetInvestigatorAsync()
+    {
+      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
+      List<MyErrand> errandList = await (from err in Errands
+                                         where err.EmployeeId == userName
+                                         join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                                         join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                                         from deptE in departmentErrand.DefaultIfEmpty()
+                                         join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                                         from empE in employeeErrand.DefaultIfEmpty()
+                                         orderby err.RefNumber descending
+                                         select new MyErrand
+                                         {
+                                           DateOfObservation = err.DateOfObservation,
+                                           ErrandId = err.ErrandId,
+                                           RefNumber = err.RefNumber!,
+                                           TypeOfCrime = err.TypeOfCrime,
+                                           StatusName = stat.StatusName!,
+                                           DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                           EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                         }).ToListAsync();
+      return errandList;
+    }
+    /**
+     * For Manager: Get an List of MyErrand on department unit
+     */
+    public async Task<List<MyErrand>> GetManagerAsync()
+    {
+      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
+      string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
+      List<MyErrand> errandList = await (from err in Errands
+                                         where err.DepartmentId == userDepartmentId
+                                         join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                                         join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                                         from deptE in departmentErrand.DefaultIfEmpty()
+                                         join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                                         from empE in employeeErrand.DefaultIfEmpty()
+                                         orderby err.RefNumber descending
+                                         select new MyErrand
+                                         {
+                                           DateOfObservation = err.DateOfObservation,
+                                           ErrandId = err.ErrandId,
+                                           RefNumber = err.RefNumber!,
+                                           TypeOfCrime = err.TypeOfCrime,
+                                           StatusName = stat.StatusName!,
+                                           DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                           EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                                         }).ToListAsync();
+      return errandList;
+    }
+    /**
+     * Return List of ErrandStatus
+     */
+    public async Task<List<ErrandStatus>> GetErrandStatusAsync()
+    {
+      return await ErrandStatuses.ToListAsync();
+    }
+
+    /**
      * Get single errand with details
      */
-    public async Task<ErrandInfo> GetErrandDetail(int errandid)
+    public async Task<Errand> GetErrandDetailAsync(int errandId)
     {
-      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid);
+      Errand? errand = await (from err in Errands
+                              where err.ErrandId == errandId
+                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                              from deptE in departmentErrand.DefaultIfEmpty()
+                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                              from empE in employeeErrand.DefaultIfEmpty()
+                              select new Errand
+                              {
+                                ErrandId = err.ErrandId,
+                                RefNumber = err.RefNumber,
+                                Place = err.Place,
+                                TypeOfCrime = err.TypeOfCrime,
+                                DateOfObservation = err.DateOfObservation,
+                                InformerName = err.InformerName,
+                                InformerPhone = err.InformerPhone,
+                                Observation = err.Observation,
+                                InvestigatorInfo = err.InvestigatorInfo,
+                                InvestigatorAction = err.InvestigatorAction,
+                                StatusId = err.StatusId,
+                                DepartmentId = err.DepartmentId,
+                                EmployeeId = err.EmployeeId,
+                                Samples = err.Samples,
+                                Pictures = err.Pictures,
+                                StatusName = stat.StatusName,
+                                DepartmentName = string.IsNullOrEmpty(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrEmpty(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                              }).FirstOrDefaultAsync();
+
       if (errand == null)
       {
-        throw new InvalidOperationException("Errand not found " + errandid);
+        throw new InvalidOperationException("Errand not found " + errandId);
       }
 
-      // Collect saples if it exist.
-      errand.Samples!.Clear();
-      var samples = context.Samples.Where(sa => sa.ErrandId == errandid);
-      foreach (var sample in samples)
-      {
-        errand.Samples!.Add(sample);
-      }
-      
-      // Collect pictures if it exist.
-      errand.Pictures!.Clear();
-      var pictures = context.Pictures.Where(pi => pi.ErrandId == errandid);
-      foreach (var picture in pictures)
-      {
-        errand.Pictures!.Add(picture);
-      }
-
-      /**
-       * Database contains only the Ids for Status, Department and Employee in key fields.
-       * lookup the names from the related collections and add to the ViewModel
-       */
-      ErrandStatus? es = await ErrandStatuses.FirstOrDefaultAsync(st => st.StatusId == errand.StatusId);
-      Department? dep = await Departments.FirstOrDefaultAsync(dep => dep.DepartmentId == errand.DepartmentId);
-      Employee? emp = await Employees.FirstOrDefaultAsync(emp => emp.EmployeeId == errand.EmployeeId);
-
-      ErrandInfo viewModel = new()
-      {
-        Errands = errand,
-        StatusName = (es == null) ? "Inte angivet" : es.StatusName!,
-        DepartmentName = (dep == null) ? "Inte angivet" : dep.DepartmentName!,
-        EmployeeName = (emp == null) ? "Inte angivet" : emp.EmployeeName!
-      };
-      return viewModel;
+      return errand;
     }
     /**
      * Get single sequense with details
      */
-    public async Task<Sequence> GetSequenceAsync(int seqid)
+    public async Task<Sequence> GetSequenceAsync(int seqId)
     {
-      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
-      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
+      Sequence? seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqId);
+      if (seq == null)
+      {
+        throw new InvalidOperationException("Sequence not found " + seqId);
+      }
+
+      return seq;
     }
     /**
      * Update:
@@ -98,8 +197,9 @@ namespace EnvironmentCrime.Models
       }
       catch (Exception)
       {
-        return false;
+        // Ignore errors
       }
+      return false;
     }
     /**
      * Create:
@@ -118,7 +218,7 @@ namespace EnvironmentCrime.Models
           errand.InvestigatorInfo = "";
           errand.InvestigatorAction = "";
           errand.StatusId = "S_A";
-          errand.DepartmentId = "";
+          errand.DepartmentId = "D00";
           errand.EmployeeId = "";
           await context.Errands.AddAsync(errand);
 
@@ -130,7 +230,7 @@ namespace EnvironmentCrime.Models
       }
       catch (Exception)
       {
-        // All error is ignored
+        // Ignore errors
       }
       return "Error in SaveNewErrandAsync";
     }
@@ -157,8 +257,9 @@ namespace EnvironmentCrime.Models
       }
       catch
       {
-        return false;
+        // Ignore errors
       }
+      return false;
     }
     /**
      * Update: (Not used atm.)
@@ -177,8 +278,9 @@ namespace EnvironmentCrime.Models
       }
       catch (Exception)
       {
-        return false;
+        // Ignore errors
       }
+      return false;
     }
   }
 }

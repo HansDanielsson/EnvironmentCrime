@@ -1,25 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Components
 {
-  public class ShowOneCrime : ViewComponent
+  public class ShowOneCrimeViewComponent : ViewComponent
   {
     private readonly IERepository repository;
-    public ShowOneCrime(IERepository repo) => repository = repo;
+    public ShowOneCrimeViewComponent(IERepository repo) => repository = repo;
 
     /**
      * The InvokeAsync method is called when the view component is invoked in a view.
      */
     public async Task<IViewComponentResult> InvokeAsync(int errandId)
     {
-      ErrandInfo viewModel = await repository.GetErrandDetail(errandId);
+      Errand errand = await repository.GetErrandDetailAsync(errandId);
       /**
        * Save Errand to Session "WorkCrime"
        */
-      HttpContext.Session.Set("WorkCrime", viewModel.Errands);
-      return View(viewModel);
+      HttpContext.Session.Set("WorkCrime", errand);
+      return View("ShowOneCrime", errand);
     }
   }
 }
