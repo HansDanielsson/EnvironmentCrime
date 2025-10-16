@@ -12,5 +12,16 @@ namespace EnvironmentCrime.Models
     public DbSet<Picture> Pictures { get; set; }
     public DbSet<Sample> Samples { get; set; }
     public DbSet<Sequence> Sequences { get; set; }
+    // DTO/query-objekt
+    public DbSet<MyErrand> MyErrands { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+      base.OnModelCreating(modelBuilder);
+
+      // Eftersom MyErrand inte är en tabell
+      modelBuilder.Entity<MyErrand>().HasNoKey();        // <- krävs!
+      modelBuilder.Entity<MyErrand>().ToView(null); // <- säg att det inte är en vy heller
+    }
   }
 }

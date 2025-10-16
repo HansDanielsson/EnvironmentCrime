@@ -27,6 +27,12 @@ namespace EnvironmentCrime.Models
     public IQueryable<Sample> Samples => context.Samples;
     public IQueryable<Sequence> Sequences => context.Sequences;
 
+    private static bool CheckString(string? kol)
+    {
+      if (string.IsNullOrWhiteSpace(kol)) return false;
+      if (string.Equals(kol, "Välj alla", StringComparison.OrdinalIgnoreCase)) return false;
+      return true;
+    }
     /**
      * Read:
      */
@@ -35,111 +41,31 @@ namespace EnvironmentCrime.Models
      */
     public async Task<List<MyErrand>> GetCoordinatorAsync(DropDownViewModel dropDown)
     {
-      List<MyErrand> errandList;
-      if (!string.IsNullOrWhiteSpace(dropDown?.RefNumber))
+      var sqlselect = "SELECT e.DateOfObservation, e.ErrandId, e.RefNumber, e.TypeOfCrime, s.StatusName, CASE WHEN e.DepartmentId IS NULL OR LTRIM(RTRIM(e.DepartmentId)) = '' THEN 'ej tillsatt' ELSE d.DepartmentName END AS DepartmentName, CASE WHEN e.EmployeeId IS NULL OR LTRIM(RTRIM(e.EmployeeId)) = '' THEN 'ej tillsatt' ELSE emp.EmployeeName END AS EmployeeName";
+      sqlselect += " FROM Errands e";
+      sqlselect += " JOIN ErrandStatuses s ON e.StatusId = s.StatusId";
+      sqlselect += " LEFT JOIN Departments d ON e.DepartmentId = d.DepartmentId";
+      sqlselect += " LEFT JOIN Employees emp ON e.EmployeeId = emp.EmployeeId";
+      if (CheckString(dropDown.RefNumber))
       {
-        errandList = await (from err in Errands
-                            where err.RefNumber == dropDown.RefNumber
-                            join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                            join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                            from deptE in departmentErrand.DefaultIfEmpty()
-                            join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                            from empE in employeeErrand.DefaultIfEmpty()
-                            orderby err.RefNumber descending
-                            select new MyErrand
-                            {
-                              DateOfObservation = err.DateOfObservation,
-                              ErrandId = err.ErrandId,
-                              RefNumber = err.RefNumber!,
-                              TypeOfCrime = err.TypeOfCrime,
-                              StatusName = stat.StatusName!,
-                              DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                              EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                            }).ToListAsync();
+        sqlselect += " WHERE e.RefNumber = '" + dropDown.RefNumber + "'";
       }
-      else if (!(string.IsNullOrWhiteSpace(dropDown?.StatusId) || string.IsNullOrWhiteSpace(dropDown?.DepartmentId)))
+      else if (CheckString(dropDown?.StatusId) && CheckString(dropDown?.DepartmentId))
       {
-        errandList = await (from err in Errands
-                            where err.StatusId == dropDown.StatusId && err.DepartmentId == dropDown.DepartmentId
-                            join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                            join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                            from deptE in departmentErrand.DefaultIfEmpty()
-                            join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                            from empE in employeeErrand.DefaultIfEmpty()
-                            orderby err.RefNumber descending
-                            select new MyErrand
-                            {
-                              DateOfObservation = err.DateOfObservation,
-                              ErrandId = err.ErrandId,
-                              RefNumber = err.RefNumber!,
-                              TypeOfCrime = err.TypeOfCrime,
-                              StatusName = stat.StatusName!,
-                              DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                              EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                            }).ToListAsync();
+        sqlselect += " WHERE e.StatusId = '" + dropDown!.StatusId + "' AND e.DepartmentId = '" + dropDown.DepartmentId + "'";
       }
-      else if (!string.IsNullOrWhiteSpace(dropDown?.StatusId))
+      else if (CheckString(dropDown?.StatusId))
       {
-        errandList = await (from err in Errands
-                            where err.StatusId == dropDown.StatusId
-                            join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                            join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                            from deptE in departmentErrand.DefaultIfEmpty()
-                            join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                            from empE in employeeErrand.DefaultIfEmpty()
-                            orderby err.RefNumber descending
-                            select new MyErrand
-                            {
-                              DateOfObservation = err.DateOfObservation,
-                              ErrandId = err.ErrandId,
-                              RefNumber = err.RefNumber!,
-                              TypeOfCrime = err.TypeOfCrime,
-                              StatusName = stat.StatusName!,
-                              DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                              EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                            }).ToListAsync();
+        sqlselect += " WHERE e.StatusId = '" + dropDown!.StatusId + "'";
       }
-      else if (!string.IsNullOrWhiteSpace(dropDown?.DepartmentId))
+      else if (CheckString(dropDown?.DepartmentId))
       {
-        errandList = await (from err in Errands
-                            where err.DepartmentId == dropDown.DepartmentId
-                            join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                            join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                            from deptE in departmentErrand.DefaultIfEmpty()
-                            join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                            from empE in employeeErrand.DefaultIfEmpty()
-                            orderby err.RefNumber descending
-                            select new MyErrand
-                            {
-                              DateOfObservation = err.DateOfObservation,
-                              ErrandId = err.ErrandId,
-                              RefNumber = err.RefNumber!,
-                              TypeOfCrime = err.TypeOfCrime,
-                              StatusName = stat.StatusName!,
-                              DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                              EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                            }).ToListAsync();
+        sqlselect += " WHERE e.DepartmentId = '" + dropDown!.DepartmentId + "'";
       }
-      else
-      {
-        errandList = await (from err in Errands
-                            join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                            join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                            from deptE in departmentErrand.DefaultIfEmpty()
-                            join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                            from empE in employeeErrand.DefaultIfEmpty()
-                            orderby err.RefNumber descending
-                            select new MyErrand
-                            {
-                              DateOfObservation = err.DateOfObservation,
-                              ErrandId = err.ErrandId,
-                              RefNumber = err.RefNumber!,
-                              TypeOfCrime = err.TypeOfCrime,
-                              StatusName = stat.StatusName!,
-                              DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                              EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                            }).ToListAsync();
-      }
+      
+      sqlselect += " ORDER BY e.RefNumber DESC";
+      List<MyErrand> errandList = await context.MyErrands.FromSqlRaw(sqlselect).ToListAsync();
+
       return errandList;
     }
     /**
