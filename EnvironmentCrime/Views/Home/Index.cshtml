@@ -2,8 +2,7 @@
 @{
   ViewBag.msg1 = "Välkommen att fylla i din anmälan av miljöbrott";
   ViewBag.msg2 = "I Småstad är inga brott för små för att anmälas";
+  ViewBag.controller = "Citizen";
 }
 
-<form asp-controller="Citizen" asp-action="Validate" method="post">
-  @await Component.InvokeAsync("ErrandInput", Model);
-</form>
+@await Component.InvokeAsync("ErrandInput", Model);

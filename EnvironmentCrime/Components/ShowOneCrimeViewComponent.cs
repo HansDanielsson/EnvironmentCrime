@@ -12,12 +12,20 @@ namespace EnvironmentCrime.Components
     /**
      * The InvokeAsync method is called when the view component is invoked in a view.
      */
-    public async Task<IViewComponentResult> InvokeAsync(int errandId)
+    public async Task<IViewComponentResult> InvokeAsync()
     {
-      Errand errand = await repository.GetErrandDetailAsync(errandId);
+      Errand? errand;
+      try
+      {
+        errand = await repository.GetErrandDetailAsync(ViewBag.errandId);
+      }
+      catch (Exception)
+      {
+        errand = null;
+      }
       /**
-       * Save Errand to Session "WorkCrime"
-       */
+         * Save Errand to Session "WorkCrime"
+         */
       HttpContext.Session.Set("WorkCrime", errand);
       return View("ShowOneCrime", errand);
     }

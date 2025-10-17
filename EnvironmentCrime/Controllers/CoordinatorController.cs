@@ -36,9 +36,16 @@ namespace EnvironmentCrime.Controllers
       /**
        * Save a new record and display the generated RefNumber
        */
-      Errand errand = HttpContext.Session.Get<Errand>("CoordinatorCrime")!;
-      ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
-
+      Errand? errand = HttpContext.Session.Get<Errand>("CoordinatorCrime");
+      if (errand == null)
+      {
+        ViewBag.RefNumber = "Fel med sessionen, registrera ärendet igen!";
+      }
+      else
+      {
+        ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
+      }
+      
       HttpContext.Session.Remove("CoordinatorCrime");
       return View();
     }
@@ -70,9 +77,12 @@ namespace EnvironmentCrime.Controllers
     {
       if (!string.IsNullOrWhiteSpace(DepartmentId) && DepartmentId != "Välj")
       {
-        Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
-        errand.DepartmentId = DepartmentId; // Change department
-        await repository.SaveErrandAsync(errand);
+        Errand? errand = HttpContext.Session.Get<Errand>("WorkCrime");
+        if (errand != null)
+        {
+          errand.DepartmentId = DepartmentId; // Change department
+          await repository.SaveErrandAsync(errand);
+        }
       }
       return RedirectToAction("StartCoordinator");
     }

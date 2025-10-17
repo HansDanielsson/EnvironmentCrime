@@ -5,7 +5,7 @@
 <h2>Detaljer för ärendet</h2>
 <p class="info">Du är inloggad som handläggare</p>
 
-@await Component.InvokeAsync("ShowOneCrime", ViewBag.errandId)
+@await Component.InvokeAsync("ShowOneCrime");
 
 <section id="bottomColumn">
   <h3>Redigera ärende</h3>
@@ -20,17 +20,17 @@
     <br /><br />
     <label asp-for="Sample" class="label"></label>
     <br /><br />
-    <input asp-for="Sample" type="file">
+    <input asp-for="Sample" type="file" />
     <br /><br />
     <label asp-for="Picture" class="label"></label>
     <br /><br />
-    <input asp-for="Picture" type="file">
+    <input asp-for="Picture" type="file" />
     <br /><br />
     <label asp-for="StatusId" class="label"></label>
     <br /><br />
     <select asp-for="StatusId" asp-items="@(new SelectList(ViewBag.ListOfStatus, "StatusId", "StatusName"))">
       <option>Välj</option>
     </select>
-    <p><input class="button" type="submit" value="Spara"></p>
+    <p><input class="button" type="submit" value="Spara" /></p>
   </form>
 </section>

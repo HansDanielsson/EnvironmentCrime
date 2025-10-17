@@ -3,8 +3,7 @@
   Layout = "_MenyLayout";
   ViewBag.msg1 = "Rapportera brott";
   ViewBag.msg2 = "Du är inloggad som samordnare";
+  ViewBag.controller = "Coordinator";
 }
 
-<form asp-controller="Coordinator" asp-action="Validate" method="post">
-  @await Component.InvokeAsync("ErrandInput", Model);
-</form>
+@await Component.InvokeAsync("ErrandInput", Model);

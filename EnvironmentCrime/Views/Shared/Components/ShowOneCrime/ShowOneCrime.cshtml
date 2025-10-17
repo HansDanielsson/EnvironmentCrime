@@ -1,95 +1,97 @@
 ﻿@model Errand
+@if (Model != null)
+{
+  <h3>Ärende: @Model.RefNumber</h3>
 
-<h3>Ärende: @Model.RefNumber</h3>
-
-<!--Nedan ser man en lista på ärenden-->
-<section id="leftColumn">
-  <h3>Anmälan</h3>
-  <div>
-    <span class="label">Typ av brott:</span><br />
-    @Model.TypeOfCrime
-  </div>
-  <br />
-  <div>
-    <span class="label">Brottsplats:</span><br />
-    @Model.Place
-  </div>
-  <br />
-  <div>
-    <span class="label">Brottsdatum:</span><br />
-    @Model.DateOfObservation.ToString("yyyy-MM-dd")
-  </div>
-  <br />
-  <div>
-    <span class="label">Anmälare:</span><br />
-    @Model.InformerName
-  </div>
-  <br />
-  <div>
-    <span class="label">Telefon:</span><br />
-    @Model.InformerPhone
-  </div>
-  <br />
-  <div>
-    <span class="label">Observationer:</span><br />
-    @Model.Observation
-  </div>
-  <br />
-</section>
-
-<section id="rightColumn">
-  <h3>Utredning</h3>
-  <div>
-    <span class="label">Status:</span><br />
-    @Model.StatusName
-  </div>
-  <br />
-  <div>
-    <span class="label">Ansvarig avdelning:</span><br />
-    @Model.DepartmentName
-  </div>
-  <br />
-  <div>
-    <span class="label">Handläggare:</span><br />
-    @Model.EmployeeName
-  </div>
-  <br />
-  <div>
-    <span class="label">Ytterligare information:</span><br />
-    @Model.InvestigatorInfo
-  </div>
-  <br />
-  <div>
-    <span class="label">Händelser:</span><br />
-    @Model.InvestigatorAction
-  </div>
-  <br />
-  @if (Model.Samples != null && Model.Samples.Any())
-  {
+  <!--Nedan ser man en lista på ärenden-->
+  <section id="leftColumn">
+    <h3>Anmälan</h3>
     <div>
-      <span class="label">Provtagning:</span><br />
-      <ul>
-        @foreach (var sample in Model.Samples)
-        {
-          <li>
-            <a href="~/sample/@sample.SampleName">@sample.SampleName!.Split('_')[1]</a>
-          </li>
-        }
-      </ul>
+      <span class="label">Typ av brott:</span><br />
+      @Model.TypeOfCrime
     </div>
     <br />
-  }
-  @if (Model.Pictures != null && Model.Pictures.Any())
-  {
     <div>
-      <span class="label">Bilder:</span><br />
-      <ul>
-        @foreach (var picture in Model.Pictures)
-        {
-          <img src="~/picture/@picture.PictureName" alt="klicka på bilden">
-        }
-      </ul>
+      <span class="label">Brottsplats:</span><br />
+      @Model.Place
     </div>
     <br />
-  }
-</section>
+    <div>
+      <span class="label">Brottsdatum:</span><br />
+      @Model.DateOfObservation.ToString("yyyy-MM-dd")
+    </div>
+    <br />
+    <div>
+      <span class="label">Anmälare:</span><br />
+      @Model.InformerName
+    </div>
+    <br />
+    <div>
+      <span class="label">Telefon:</span><br />
+      @Model.InformerPhone
+    </div>
+    <br />
+    <div>
+      <span class="label">Observationer:</span><br />
+      @Model.Observation
+    </div>
+    <br />
+  </section>
+
+  <section id="rightColumn">
+    <h3>Utredning</h3>
+    <div>
+      <span class="label">Status:</span><br />
+      @Model.StatusName
+    </div>
+    <br />
+    <div>
+      <span class="label">Ansvarig avdelning:</span><br />
+      @Model.DepartmentName
+    </div>
+    <br />
+    <div>
+      <span class="label">Handläggare:</span><br />
+      @Model.EmployeeName
+    </div>
+    <br />
+    <div>
+      <span class="label">Ytterligare information:</span><br />
+      @Model.InvestigatorInfo
+    </div>
+    <br />
+    <div>
+      <span class="label">Händelser:</span><br />
+      @Model.InvestigatorAction
+    </div>
+    <br />
+    @if (Model.Samples != null && Model.Samples.Any())
+    {
+      <div>
+        <span class="label">Provtagning:</span><br />
+        <ul>
+          @foreach (var sample in Model.Samples)
+          {
+            <li>
+              <a href="~/sample/@sample.SampleName">@sample.SampleName!.Split('_')[1]</a>
+            </li>
+          }
+        </ul>
+      </div>
+      <br />
+    }
+    @if (Model.Pictures != null && Model.Pictures.Any())
+    {
+      <div>
+        <span class="label">Bilder:</span><br />
+        <ul>
+          @foreach (var picture in Model.Pictures)
+          {
+            <img src="~/picture/@picture.PictureName" alt="klicka på bilden">
+          }
+        </ul>
+      </div>
+      <br />
+    }
+  </section>
+}

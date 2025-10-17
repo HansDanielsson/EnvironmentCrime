@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace EnvironmentCrime.Models
 {
@@ -45,7 +46,7 @@ namespace EnvironmentCrime.Models
     private static string InitSelect()
     {
       string sqlselect = "SELECT e.DateOfObservation, e.ErrandId, e.RefNumber, e.TypeOfCrime, s.StatusName,";
-      sqlselect += " CASE WHEN e.DepartmentId IS NULL OR LTRIM(RTRIM(e.DepartmentId)) = '' THEN 'ej tillsatt' ELSE d.DepartmentName END AS DepartmentName,";
+      sqlselect += " CASE WHEN e.DepartmentId IS NULL OR LTRIM(RTRIM(e.DepartmentId)) = '' OR LTRIM(RTRIM(e.DepartmentId)) = 'D00' THEN 'ej tillsatt' ELSE d.DepartmentName END AS DepartmentName,";
       sqlselect += " CASE WHEN e.EmployeeId IS NULL OR LTRIM(RTRIM(e.EmployeeId)) = '' THEN 'ej tillsatt' ELSE emp.EmployeeName END AS EmployeeName";
       sqlselect += " FROM Errands e";
       sqlselect += " JOIN ErrandStatuses s ON e.StatusId = s.StatusId";
@@ -140,13 +141,6 @@ namespace EnvironmentCrime.Models
 
       return errandList;
     }
-    /**
-     * Return List of ErrandStatus
-     */
-    public async Task<List<ErrandStatus>> GetErrandStatusAsync()
-    {
-      return await ErrandStatuses.ToListAsync();
-    }
 
     /**
      * Get single errand with details
@@ -178,7 +172,7 @@ namespace EnvironmentCrime.Models
                                 Samples = err.Samples,
                                 Pictures = err.Pictures,
                                 StatusName = stat.StatusName,
-                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) || err.DepartmentId == "D00" ? "ej tillsatt" : deptE.DepartmentName,
                                 EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                               }).FirstOrDefaultAsync();
 
@@ -188,19 +182,6 @@ namespace EnvironmentCrime.Models
       }
 
       return errand;
-    }
-    /**
-     * Get single sequense with details
-     */
-    public async Task<Sequence> GetSequenceAsync(int seqId)
-    {
-      Sequence? seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqId);
-      if (seq == null)
-      {
-        throw new InvalidOperationException("Sequence not found " + seqId);
-      }
-
-      return seq;
     }
     /**
      * Update:
@@ -251,7 +232,7 @@ namespace EnvironmentCrime.Models
           errand.InvestigatorInfo = "";
           errand.InvestigatorAction = "";
           errand.StatusId = "S_A";
-          errand.DepartmentId = "";
+          errand.DepartmentId = "D00";
           errand.EmployeeId = "";
           await context.Errands.AddAsync(errand);
 
@@ -289,27 +270,6 @@ namespace EnvironmentCrime.Models
         return true;
       }
       catch
-      {
-        // Ignore errors
-      }
-      return false;
-    }
-    /**
-     * Update: (Not used atm.)
-     * Update an existing sequence.
-     */
-    public async Task<bool> UpdateSequenceAsync(Sequence sequence)
-    {
-      try
-      {
-        Sequence? dbEntry = await context.Sequences.FirstOrDefaultAsync(seq => seq.Id == sequence.Id);
-        if (dbEntry != null)
-        {
-          dbEntry.CurrentValue = sequence.CurrentValue;
-        }
-        return true;
-      }
-      catch (Exception)
       {
         // Ignore errors
       }

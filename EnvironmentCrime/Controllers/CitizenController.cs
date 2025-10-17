@@ -25,9 +25,16 @@ namespace EnvironmentCrime.Controllers
       /**
        * Save a new record and display the generated RefNumber
        */
-      Errand errand = HttpContext.Session.Get<Errand>("IndexCrime")!;
-      ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
-
+      Errand? errand = HttpContext.Session.Get<Errand>("IndexCrime");
+      if (errand == null)
+      {
+        ViewBag.RefNumber = "Fel med sessionen, registrera ärendet igen!";
+      }
+      else
+      {
+        ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
+      }
+      
       HttpContext.Session.Remove("IndexCrime");
       return View();
     }

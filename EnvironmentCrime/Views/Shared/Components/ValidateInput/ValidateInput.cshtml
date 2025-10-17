@@ -18,11 +18,11 @@
   @if (role == "Coordinator")
   {
     <a asp-controller="Coordinator" asp-action="ReportCrime" class="button">Tillbaka</a>
-    <a asp-controller="Coordinator" asp-action="Thanks" class="button">Bekräfta</a>
   }
   else
   {
     <a asp-controller="Home" asp-action="Index" class="button">Tillbaka</a>
-    <a asp-controller="Citizen" asp-action="Thanks" class="button">Bekräfta</a>
+    role = "Citizen";
   }
+  <a asp-controller="@role" asp-action="Thanks" class="button">Bekräfta</a>
 </p>

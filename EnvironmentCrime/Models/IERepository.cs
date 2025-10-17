@@ -20,17 +20,11 @@
     Task<List<MyErrand>> GetCoordinatorAsync(DropDownViewModel dropDown);
     Task<List<MyErrand>> GetInvestigatorAsync(DropDownViewModel dropDown);
     Task<List<MyErrand>> GetManagerAsync(DropDownViewModel dropDown);
-    Task<List<ErrandStatus>> GetErrandStatusAsync();
 
     /**
      * Get single errand with details
      */
     Task<Errand> GetErrandDetailAsync(int errandId);
-
-    /**
-     * Get single sequense with details
-     */
-    Task<Sequence> GetSequenceAsync(int seqId);
 
     /**
      * Update: (Not used atm)
@@ -47,11 +41,5 @@
      */
     Task<string> SaveNewErrandAsync(Errand errand);
     Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile);
-
-    /**
-     * Update: (Not used atm.)
-     * Update an existing sequence.
-     */
-    Task<bool> UpdateSequenceAsync(Sequence sequence);
   }
 }

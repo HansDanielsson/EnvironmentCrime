@@ -155,10 +155,6 @@ namespace EnvironmentCrime.Models
                               }).ToListAsync();
       return errandList;
     }
-    public async Task<List<ErrandStatus>> GetErrandStatusAsync()
-    {
-      return await ErrandStatuses.ToListAsync();
-    }
     /**
      * Get single errand with details
      */
@@ -200,19 +196,7 @@ namespace EnvironmentCrime.Models
 
       return errand;
     }
-    /**
-     * Get single sequense with details
-     */
-    public async Task<Sequence> GetSequenceAsync(int seqId)
-    {
-      Sequence? seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqId);
-      if (seq == null)
-      {
-        throw new InvalidOperationException("Sequence not found " + seqId);
-      }
 
-      return seq;
-    }
     /**
      * Update:
      * Update a errand to the repository.
@@ -233,14 +217,6 @@ namespace EnvironmentCrime.Models
       return await Task.FromResult("Not implemented");
     }
     public async Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile)
-    {
-      return await Task.FromResult(true);
-    }
-    /**
-     * Update: (Not used atm.)
-     * Update an existing sequence.
-     */
-    public async Task<bool> UpdateSequenceAsync(Sequence sequence)
     {
       return await Task.FromResult(true);
     }

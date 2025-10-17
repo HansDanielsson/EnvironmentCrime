@@ -5,9 +5,9 @@ namespace EnvironmentCrime.Components
 {
   public class ThanksInfoViewComponent : ViewComponent
   {
-    public IViewComponentResult Invoke(Errand errand)
+    public IViewComponentResult Invoke()
     {
-      return View("ThanksInfo", errand);
+      return View("ThanksInfo");
     }
   }
 }

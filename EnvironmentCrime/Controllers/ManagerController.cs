@@ -42,9 +42,9 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public async Task<IActionResult> SaveManager(SaveManagerViewModel model)
     {
-      if (model != null)
+      Errand? errand = HttpContext.Session.Get<Errand>("WorkCrime");
+      if (model != null && errand != null)
       {
-        Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
         if (model.NoAction)
         {
           if (!string.IsNullOrWhiteSpace(model.InvestigatorInfo))
