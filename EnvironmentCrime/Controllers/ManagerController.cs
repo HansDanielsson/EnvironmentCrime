@@ -16,7 +16,9 @@ namespace EnvironmentCrime.Controllers
       repository = repo;
       contextAcc = cont;
     }
-
+    /*
+     * Show errand with id number.
+     */
     public async Task<ViewResult> CrimeManager(int id)
     {
       string userName = contextAcc.HttpContext!.User.Identity!.Name!;

@@ -68,7 +68,7 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public async Task<IActionResult> SaveDepartment(string DepartmentId)
     {
-      if (DepartmentId != null && DepartmentId != "Välj")
+      if (!string.IsNullOrWhiteSpace(DepartmentId) && DepartmentId != "Välj")
       {
         Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
         errand.DepartmentId = DepartmentId; // Change department
