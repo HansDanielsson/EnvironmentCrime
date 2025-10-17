@@ -428,5 +428,5 @@ FodyWeavers.xsd
 *.msp
 
 */Migrations/*
-*/picture/*.jpg
-*/sample/*.txt
+**/picture/*.jpg
+**/sample/*.txt

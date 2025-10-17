@@ -20,9 +20,6 @@ namespace EnvironmentCrime.Models
     public IQueryable<Department> Departments => context.Departments;
     public IQueryable<Employee> Employees => context.Employees;
     public IQueryable<Errand> Errands => context.Errands;
-    /**
-      .Include(e => e.Samples).Include(e => e.Pictures);
-    */
     public IQueryable<ErrandStatus> ErrandStatuses => context.ErrandStatuses;
     public IQueryable<Picture> Pictures => context.Pictures;
     public IQueryable<Sample> Samples => context.Samples;
@@ -169,12 +166,16 @@ namespace EnvironmentCrime.Models
                                 StatusId = err.StatusId,
                                 DepartmentId = err.DepartmentId,
                                 EmployeeId = err.EmployeeId,
-                                Samples = err.Samples,
-                                Pictures = err.Pictures,
                                 StatusName = stat.StatusName,
                                 DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) || err.DepartmentId == "D00" ? "ej tillsatt" : deptE.DepartmentName,
                                 EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                               }).FirstOrDefaultAsync();
+      if (errand is not null)
+      {
+        errand.Pictures = await context.Pictures.Where(p => p.ErrandId == errandId).ToListAsync();
+        errand.Samples = await context.Samples.Where(s => s.ErrandId == errandId).ToListAsync();
+        
+      }
 
       if (errand == null)
       {

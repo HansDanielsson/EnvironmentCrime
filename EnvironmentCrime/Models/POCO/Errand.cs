@@ -44,9 +44,9 @@ namespace EnvironmentCrime.Models
     public string? DepartmentId { get; set; }
     public string? EmployeeId { get; set; }
     [NotMapped]
-    public ICollection<Sample>? Samples { get; set; }
+    public ICollection<Sample>? Samples { get; set; } = [];
     [NotMapped]
-    public ICollection<Picture>? Pictures { get; set; }
+    public ICollection<Picture>? Pictures { get; set; } = [];
     [NotMapped]
     public string? StatusName { get; set; }
     [NotMapped]
