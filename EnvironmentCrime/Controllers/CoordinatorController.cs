@@ -27,7 +27,7 @@ namespace EnvironmentCrime.Controllers
 
     public async Task<ViewResult> StartCoordinator(DropDownViewModel dropDown)
     {
-      List<MyErrand> cordinatorList = await repository.GetCoordinatorAsync(dropDown);
+      List<MyErrand> cordinatorList = await repository.GetErrandsAsync(1, dropDown);
       return View(cordinatorList);
     }
 

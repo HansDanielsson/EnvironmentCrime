@@ -30,7 +30,7 @@ namespace EnvironmentCrime.Controllers
     }
     public async Task<ViewResult> StartInvestigator(DropDownViewModel dropDown)
     {
-      List<MyErrand> investigatorList = await repository.GetInvestigatorAsync(dropDown);
+      List<MyErrand> investigatorList = await repository.GetErrandsAsync(2, dropDown);
       return View(investigatorList);
     }
 

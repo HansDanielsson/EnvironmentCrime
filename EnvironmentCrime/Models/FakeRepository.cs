@@ -75,85 +75,17 @@ namespace EnvironmentCrime.Models
       {
         new() { Id = 1, CurrentValue = 200 }
       }.AsQueryable();
+    
     /**
      * Read:
      */
     /**
-     * Get an List of MyErrand with all errands
+     * Get an List of MyErrand
      */
-    public async Task<List<MyErrand>> GetCoordinatorAsync(DropDownViewModel dropDown)
+    public async Task<List<MyErrand>> GetErrandsAsync(int model, DropDownViewModel dropDown)
     {
-      List<MyErrand> errandList = await (from err in Errands
-                                         join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                                         join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                                         from deptE in departmentErrand.DefaultIfEmpty()
-                                         join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                                         from empE in employeeErrand.DefaultIfEmpty()
-                                         orderby err.RefNumber descending
-                                         select new MyErrand
-                                         {
-                                           DateOfObservation = err.DateOfObservation,
-                                           ErrandId = err.ErrandId,
-                                           RefNumber = err.RefNumber!,
-                                           TypeOfCrime = err.TypeOfCrime,
-                                           StatusName = stat.StatusName!,
-                                           DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                           EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                                         }).ToListAsync();
-      return errandList;
-    }
-    /**
-     * For Investigator: Get an List of MyErrand on department unit
-     */
-    public async Task<List<MyErrand>> GetInvestigatorAsync(DropDownViewModel dropDown)
-    {
-      string userName = "E202";
-      var errandList = await (from err in Errands
-                              where err.EmployeeId == userName
-                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                              from deptE in departmentErrand.DefaultIfEmpty()
-                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                              from empE in employeeErrand.DefaultIfEmpty()
-                              orderby err.RefNumber descending
-                              select new MyErrand
-                              {
-                                DateOfObservation = err.DateOfObservation,
-                                ErrandId = err.ErrandId,
-                                RefNumber = err.RefNumber!,
-                                TypeOfCrime = err.TypeOfCrime,
-                                StatusName = stat.StatusName!,
-                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                              }).ToListAsync();
-      return errandList;
-    }
-    /**
-     * For Manager: Get an List of MyErrand on department unit
-     */
-    public async Task<List<MyErrand>> GetManagerAsync(DropDownViewModel dropDown)
-    {
-      string userName = "E103";
-      string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
-      var errandList = await (from err in Errands
-                              where err.DepartmentId == userDepartmentId
-                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
-                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
-                              from deptE in departmentErrand.DefaultIfEmpty()
-                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
-                              from empE in employeeErrand.DefaultIfEmpty()
-                              orderby err.RefNumber descending
-                              select new MyErrand
-                              {
-                                DateOfObservation = err.DateOfObservation,
-                                ErrandId = err.ErrandId,
-                                RefNumber = err.RefNumber!,
-                                TypeOfCrime = err.TypeOfCrime,
-                                StatusName = stat.StatusName!,
-                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
-                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
-                              }).ToListAsync();
-      return errandList;
+      await Task.CompletedTask;
+      return [];
     }
     /**
      * Get single errand with details
@@ -205,7 +137,8 @@ namespace EnvironmentCrime.Models
      */
     public async Task<bool> SaveErrandAsync(Errand errand)
     {
-      return await Task.FromResult(true);
+      await Task.CompletedTask;
+      return true;
     }
     /**
      * Create:
@@ -214,11 +147,13 @@ namespace EnvironmentCrime.Models
      */
     public async Task<string> SaveNewErrandAsync(Errand errand)
     {
-      return await Task.FromResult("Not implemented");
+      await Task.CompletedTask;
+      return "Not implemented";
     }
     public async Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile)
     {
-      return await Task.FromResult(true);
+      await Task.CompletedTask;
+      return true;
     }
   }
 }

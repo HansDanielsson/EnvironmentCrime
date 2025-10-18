@@ -33,7 +33,7 @@ namespace EnvironmentCrime.Controllers
     }
     public async Task<ViewResult> StartManager(DropDownViewModel dropDown)
     {
-      List<MyErrand> managerList = await repository.GetManagerAsync(dropDown);
+      List<MyErrand> managerList = await repository.GetErrandsAsync(3, dropDown);
       return View(managerList);
     }
     /*

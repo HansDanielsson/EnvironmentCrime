@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace EnvironmentCrime.Models
 {
@@ -27,8 +26,7 @@ namespace EnvironmentCrime.Models
 
     /**
      * Help function to check an string
-     * Return: True - Ok, False - Null/""/"  "/"Välj alla"
-     * 
+     * Return: Null/""/"  "/"Välj alla" - False, Ok - True
      */
     private static bool CheckString(string? kol)
     {
@@ -52,85 +50,68 @@ namespace EnvironmentCrime.Models
       return sqlselect;
     }
     /**
-     * Read:
+     * Help function to select dropdown options
      */
-    /**
-     * Get an List of MyErrand with all errands
-     */
-    public async Task<List<MyErrand>> GetCoordinatorAsync(DropDownViewModel dropDown)
+    private static string AndOptions(DropDownViewModel dropDown)
     {
-      string sqlselect = InitSelect();
+      string sqlselect = "";
       if (CheckString(dropDown?.RefNumber))
       {
-        sqlselect += " WHERE e.RefNumber = '" + dropDown!.RefNumber! + "'";
-      }
-      else if (CheckString(dropDown?.StatusId))
-      {
-        sqlselect += " WHERE e.StatusId = '" + dropDown!.StatusId! + "'";
-        if (CheckString(dropDown?.DepartmentId))
-        {
-          sqlselect += " AND e.DepartmentId = '" + dropDown!.DepartmentId! + "'";
-        }
-      }
-      else if (CheckString(dropDown?.DepartmentId))
-      {
-        sqlselect += " WHERE e.DepartmentId = '" + dropDown!.DepartmentId! + "'";
-      }
-      
-      sqlselect += " ORDER BY e.RefNumber DESC";
-      List<MyErrand> errandList = await context.MyErrands.FromSqlRaw(sqlselect).ToListAsync();
-
-      return errandList;
-    }
-    /**
-     * For Investigator: Get an List of MyErrand on employeet unit
-     */
-    public async Task<List<MyErrand>> GetInvestigatorAsync(DropDownViewModel dropDown)
-    {
-      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
-
-      string sqlselect = InitSelect();
-      sqlselect += " WHERE e.EmployeeId = '" + userName + "'";
-
-      if (CheckString(dropDown?.RefNumber))
-      {
-        sqlselect += " AND e.RefNumber = '" + dropDown!.RefNumber! + "'";
-      }
-      else if (CheckString(dropDown?.StatusId))
-      {
-        sqlselect += " AND e.StatusId = '" + dropDown!.StatusId! + "'";
-      }
-
-      sqlselect += " ORDER BY e.RefNumber DESC";
-      List<MyErrand> errandList = await context.MyErrands.FromSqlRaw(sqlselect).ToListAsync();
-
-      return errandList;
-    }
-    /**
-     * For Manager: Get an List of MyErrand on department unit
-     */
-    public async Task<List<MyErrand>> GetManagerAsync(DropDownViewModel dropDown)
-    {
-      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
-      string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
-
-      string sqlselect = InitSelect();
-      sqlselect += " WHERE e.DepartmentId = '" + userDepartmentId + "'";
-
-      if (CheckString(dropDown?.RefNumber))
-      {
-        sqlselect += " AND e.RefNumber = '" + dropDown!.RefNumber! + "'";
+        sqlselect = " AND e.RefNumber = '" + dropDown!.RefNumber! + "'";
       }
       else
       {
         if (CheckString(dropDown?.StatusId))
         {
-          sqlselect += " AND e.StatusId = '" + dropDown!.StatusId! + "'";
+          sqlselect = " AND e.StatusId = '" + dropDown!.StatusId! + "'";
         }
         if (CheckString(dropDown?.EmployeeId))
         {
           sqlselect += " AND e.EmployeeId = '" + dropDown!.EmployeeId! + "'";
         }
+      }
+      return sqlselect;
+    }
+    /**
+     * Read:
+     */
+    /**
+     * Get an List of MyErrand
+     */
+    public async Task<List<MyErrand>> GetErrandsAsync(int model, DropDownViewModel dropDown)
+    {
+      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
+      string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
+
+      string sqlselect = InitSelect();
+      if (model == 1) // Coordinator
+      {
+        if (CheckString(dropDown?.RefNumber))
+        {
+          sqlselect += " WHERE e.RefNumber = '" + dropDown!.RefNumber! + "'";
+        }
+        else if (CheckString(dropDown?.StatusId))
+        {
+          sqlselect += " WHERE e.StatusId = '" + dropDown!.StatusId! + "'";
+          if (CheckString(dropDown?.DepartmentId))
+          {
+            sqlselect += " AND e.DepartmentId = '" + dropDown!.DepartmentId! + "'";
+          }
+        }
+        else if (CheckString(dropDown?.DepartmentId))
+        {
+          sqlselect += " WHERE e.DepartmentId = '" + dropDown!.DepartmentId! + "'";
+        }
+      }
+      else if (model == 2) // Investigator
+      {
+        sqlselect += " WHERE e.EmployeeId = '" + userName + "'";
+        sqlselect += AndOptions(dropDown);
+      }
+      else if (model == 3) // Manager
+      {
+        sqlselect += " WHERE e.DepartmentId = '" + userDepartmentId + "'";
+        sqlselect += AndOptions(dropDown);
       }
 
       sqlselect += " ORDER BY e.RefNumber DESC";

@@ -17,9 +17,7 @@
     /**
      * Get items in List.
      */
-    Task<List<MyErrand>> GetCoordinatorAsync(DropDownViewModel dropDown);
-    Task<List<MyErrand>> GetInvestigatorAsync(DropDownViewModel dropDown);
-    Task<List<MyErrand>> GetManagerAsync(DropDownViewModel dropDown);
+    Task<List<MyErrand>> GetErrandsAsync(int model, DropDownViewModel dropDown);
 
     /**
      * Get single errand with details
