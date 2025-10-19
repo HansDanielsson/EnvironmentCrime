@@ -32,7 +32,7 @@ namespace EnvironmentCrime.Controllers
       if (ModelState.IsValid)
       {
         IdentityUser? user = await userManager.FindByNameAsync(loginModel.UserName!);
-        if (user != null)
+        if (user is not null)
         {
           await signInManager.SignOutAsync();
           if ((await signInManager.PasswordSignInAsync(user, loginModel.Password!, false, false)).Succeeded)

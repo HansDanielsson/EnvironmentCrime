@@ -22,7 +22,7 @@ namespace EnvironmentCrime.Controllers
     public ViewResult ReportCrime()
     {
       Errand? myErrand = HttpContext.Session.Get<Errand>("CoordinatorCrime");
-      return myErrand == null ? View() : View(myErrand);
+      return myErrand is null ? View() : View(myErrand);
     }
 
     public async Task<ViewResult> StartCoordinator(DropDownViewModel dropDown)
@@ -37,7 +37,7 @@ namespace EnvironmentCrime.Controllers
        * Save a new record and display the generated RefNumber
        */
       Errand? errand = HttpContext.Session.Get<Errand>("CoordinatorCrime");
-      if (errand == null)
+      if (errand is null)
       {
         ViewBag.RefNumber = "Fel med sessionen, registrera ärendet igen!";
       }
@@ -78,7 +78,7 @@ namespace EnvironmentCrime.Controllers
       if (!string.IsNullOrWhiteSpace(DepartmentId) && DepartmentId != "Välj")
       {
         Errand? errand = HttpContext.Session.Get<Errand>("WorkCrime");
-        if (errand != null)
+        if (errand is not null)
         {
           errand.DepartmentId = DepartmentId; // Change department
           await repository.SaveErrandAsync(errand);

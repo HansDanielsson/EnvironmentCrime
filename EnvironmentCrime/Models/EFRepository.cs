@@ -36,20 +36,6 @@ namespace EnvironmentCrime.Models
     }
 
     /**
-     * Help function to start select sql
-     */
-    private static string InitSelect()
-    {
-      string sqlselect = "SELECT e.DateOfObservation, e.ErrandId, e.RefNumber, e.TypeOfCrime, s.StatusName,";
-      sqlselect += " CASE WHEN e.DepartmentId IS NULL OR LTRIM(RTRIM(e.DepartmentId)) = '' OR LTRIM(RTRIM(e.DepartmentId)) = 'D00' THEN 'ej tillsatt' ELSE d.DepartmentName END AS DepartmentName,";
-      sqlselect += " CASE WHEN e.EmployeeId IS NULL OR LTRIM(RTRIM(e.EmployeeId)) = '' THEN 'ej tillsatt' ELSE emp.EmployeeName END AS EmployeeName";
-      sqlselect += " FROM Errands e";
-      sqlselect += " JOIN ErrandStatuses s ON e.StatusId = s.StatusId";
-      sqlselect += " LEFT JOIN Departments d ON e.DepartmentId = d.DepartmentId";
-      sqlselect += " LEFT JOIN Employees emp ON e.EmployeeId = emp.EmployeeId";
-      return sqlselect;
-    }
-    /**
      * Help function to select dropdown options
      */
     private static string AndOptions(DropDownViewModel dropDown)
@@ -83,7 +69,13 @@ namespace EnvironmentCrime.Models
       string userName = contextAcc.HttpContext!.User.Identity!.Name!;
       string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
 
-      string sqlselect = InitSelect();
+      string sqlselect = "SELECT e.DateOfObservation, e.ErrandId, e.RefNumber, e.TypeOfCrime, s.StatusName,";
+      sqlselect += " CASE WHEN e.DepartmentId IS NULL OR LTRIM(RTRIM(e.DepartmentId)) = '' OR LTRIM(RTRIM(e.DepartmentId)) = 'D00' THEN 'ej tillsatt' ELSE d.DepartmentName END AS DepartmentName,";
+      sqlselect += " CASE WHEN e.EmployeeId IS NULL OR LTRIM(RTRIM(e.EmployeeId)) = '' THEN 'ej tillsatt' ELSE emp.EmployeeName END AS EmployeeName";
+      sqlselect += " FROM Errands e";
+      sqlselect += " JOIN ErrandStatuses s ON e.StatusId = s.StatusId";
+      sqlselect += " LEFT JOIN Departments d ON e.DepartmentId = d.DepartmentId";
+      sqlselect += " LEFT JOIN Employees emp ON e.EmployeeId = emp.EmployeeId";
       if (model == 1) // Coordinator
       {
         if (CheckString(dropDown?.RefNumber))
@@ -158,7 +150,7 @@ namespace EnvironmentCrime.Models
         
       }
 
-      if (errand == null)
+      if (errand is null)
       {
         throw new InvalidOperationException("Errand not found " + errandId);
       }
@@ -206,7 +198,7 @@ namespace EnvironmentCrime.Models
     {
       try
       {
-        if (errand != null && errand.ErrandId == 0)
+        if (errand is not null && errand.ErrandId == 0)
         {
           Sequence? dbSeq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == 1);
           int CurrentValue = dbSeq!.CurrentValue;
@@ -244,7 +236,7 @@ namespace EnvironmentCrime.Models
           _ => null
         };
 
-        if (entity == null)
+        if (entity is null)
           return false;
 
         context.Add(entity); // Insert new record in db.

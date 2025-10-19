@@ -121,7 +121,7 @@ namespace EnvironmentCrime.Models
                                 EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
                               }).FirstOrDefaultAsync();
 
-      if (errand == null)
+      if (errand is null)
       {
         throw new InvalidOperationException("Errand not found " + errandId);
       }

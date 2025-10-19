@@ -60,7 +60,7 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public async Task<IActionResult> SaveInvestigator(SaveInvestigatorViewModel model)
     {
-      if (model != null)
+      if (model is not null)
       {
         Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
 

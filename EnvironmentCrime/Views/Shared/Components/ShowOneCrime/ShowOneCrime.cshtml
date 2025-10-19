@@ -1,5 +1,5 @@
 ﻿@model Errand
-@if (Model != null)
+@if (Model is not null)
 {
   <h3>Ärende: @Model.RefNumber</h3>
 
@@ -65,7 +65,7 @@
       @Model.InvestigatorAction
     </div>
     <br />
-    @if (Model.Samples != null && Model.Samples.Any())
+    @if (Model.Samples is not null && Model.Samples.Any())
     {
       <div>
         <span class="label">Provtagning:</span><br />
@@ -80,7 +80,7 @@
       </div>
       <br />
     }
-    @if (Model.Pictures != null && Model.Pictures.Any())
+    @if (Model.Pictures is not null && Model.Pictures.Any())
     {
       <div>
         <span class="label">Bilder:</span><br />

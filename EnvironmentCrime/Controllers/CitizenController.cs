@@ -26,7 +26,7 @@ namespace EnvironmentCrime.Controllers
        * Save a new record and display the generated RefNumber
        */
       Errand? errand = HttpContext.Session.Get<Errand>("IndexCrime");
-      if (errand == null)
+      if (errand is null)
       {
         ViewBag.RefNumber = "Fel med sessionen, registrera ärendet igen!";
       }
