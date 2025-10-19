@@ -25,7 +25,7 @@ namespace EnvironmentCrime.Controllers
       string? userDepartmentId =await repository.Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
 
       // Load Employess from database record
-      ViewBag.ListOfEmployee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId).ToListAsync();
+      ViewBag.ListOfEmployee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId && emp.RoleTitle == "Investigator").ToListAsync();
       
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
