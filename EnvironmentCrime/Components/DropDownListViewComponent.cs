@@ -28,7 +28,7 @@ namespace EnvironmentCrime.Components
         ViewBag.msg1 = "avdelningschef";
         string userName = contextAcc.HttpContext!.User.Identity!.Name!;
         string? userDepartmentId = await repository.Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
-        ViewBag.Employee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId && emp.RoleTitle == "Investigator").ToListAsync();
+        ViewBag.Employee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId && emp.EmployeeId != userName).ToListAsync();
       }
       else
       {

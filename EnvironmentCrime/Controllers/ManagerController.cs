@@ -22,10 +22,10 @@ namespace EnvironmentCrime.Controllers
     public async Task<ViewResult> CrimeManager(int id)
     {
       string userName = contextAcc.HttpContext!.User.Identity!.Name!;
-      string? userDepartmentId =await repository.Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
+      string? userDepartmentId = await repository.Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
 
       // Load Employess from database record
-      ViewBag.ListOfEmployee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId && emp.RoleTitle == "Investigator").ToListAsync();
+      ViewBag.ListOfEmployee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId && emp.EmployeeId != userName).ToListAsync();
       
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
