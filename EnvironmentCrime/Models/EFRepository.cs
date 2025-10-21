@@ -9,7 +9,13 @@ namespace EnvironmentCrime.Models
      * Queryable collections for each entity type.
      */
     private readonly ApplicationDbContext context;
-    public EFRepository(ApplicationDbContext ctx) => context = ctx;
+    private readonly IHttpContextAccessor contextAcc;
+    public EFRepository(ApplicationDbContext ctx, IHttpContextAccessor cont)
+    {
+      context = ctx;
+      contextAcc = cont;
+    }
+
     public IQueryable<Department> Departments => context.Departments;
     public IQueryable<Employee> Employees => context.Employees;
     public IQueryable<Errand> Errands => context.Errands;
@@ -19,56 +25,137 @@ namespace EnvironmentCrime.Models
     public IQueryable<Sequence> Sequences => context.Sequences;
 
     /**
-     * Get single errand with details
+     * Help function to check an string
+     * Return: Null/""/"  "/"Välj alla" - False, Ok - True
      */
-    public async Task<ErrandInfo> GetErrandDetail(int errandid)
+    private static bool CheckString(string? kol)
     {
-      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid);
-      if (errand == null)
-      {
-        throw new InvalidOperationException("Errand not found " + errandid);
-      }
+      if (string.IsNullOrWhiteSpace(kol)) return false;
+      if (string.Equals(kol, "Välj alla", StringComparison.OrdinalIgnoreCase)) return false;
+      return true;
+    }
 
-      // Collect saples if it exist.
-      errand.Samples!.Clear();
-      var samples = context.Samples.Where(sa => sa.ErrandId == errandid);
-      foreach (var sample in samples)
+    /**
+     * Help function to select dropdown options
+     */
+    private static string AndOptions(DropDownViewModel dropDown)
+    {
+      string sqlselect = "";
+      if (CheckString(dropDown?.RefNumber))
       {
-        errand.Samples!.Add(sample);
+        sqlselect = " AND e.RefNumber = '" + dropDown!.RefNumber! + "'";
       }
-      
-      // Collect pictures if it exist.
-      errand.Pictures!.Clear();
-      var pictures = context.Pictures.Where(pi => pi.ErrandId == errandid);
-      foreach (var picture in pictures)
+      else
       {
-        errand.Pictures!.Add(picture);
+        if (CheckString(dropDown?.StatusId))
+        {
+          sqlselect = " AND e.StatusId = '" + dropDown!.StatusId! + "'";
+        }
+        if (CheckString(dropDown?.EmployeeId))
+        {
+          sqlselect += " AND e.EmployeeId = '" + dropDown!.EmployeeId! + "'";
+        }
       }
-
-      /**
-       * Database contains only the Ids for Status, Department and Employee in key fields.
-       * lookup the names from the related collections and add to the ViewModel
-       */
-      ErrandStatus? es = await ErrandStatuses.FirstOrDefaultAsync(st => st.StatusId == errand.StatusId);
-      Department? dep = await Departments.FirstOrDefaultAsync(dep => dep.DepartmentId == errand.DepartmentId);
-      Employee? emp = await Employees.FirstOrDefaultAsync(emp => emp.EmployeeId == errand.EmployeeId);
-
-      ErrandInfo viewModel = new()
-      {
-        Errands = errand,
-        StatusName = (es == null) ? "Inte angivet" : es.StatusName!,
-        DepartmentName = (dep == null) ? "Inte angivet" : dep.DepartmentName!,
-        EmployeeName = (emp == null) ? "Inte angivet" : emp.EmployeeName!
-      };
-      return viewModel;
+      return sqlselect;
     }
     /**
-     * Get single sequense with details
+     * Read:
      */
-    public async Task<Sequence> GetSequenceAsync(int seqid)
+    /**
+     * Get an List of MyErrand
+     */
+    public async Task<List<MyErrand>> GetErrandsAsync(int model, DropDownViewModel dropDown)
     {
-      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
-      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
+      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
+      string? userDepartmentId = await Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
+
+      string sqlselect = "SELECT e.DateOfObservation, e.ErrandId, e.RefNumber, e.TypeOfCrime, s.StatusName,";
+      sqlselect += " CASE WHEN e.DepartmentId IS NULL OR LTRIM(RTRIM(e.DepartmentId)) = '' OR LTRIM(RTRIM(e.DepartmentId)) = 'D00' THEN 'ej tillsatt' ELSE d.DepartmentName END AS DepartmentName,";
+      sqlselect += " CASE WHEN e.EmployeeId IS NULL OR LTRIM(RTRIM(e.EmployeeId)) = '' THEN 'ej tillsatt' ELSE emp.EmployeeName END AS EmployeeName";
+      sqlselect += " FROM Errands e";
+      sqlselect += " JOIN ErrandStatuses s ON e.StatusId = s.StatusId";
+      sqlselect += " LEFT JOIN Departments d ON e.DepartmentId = d.DepartmentId";
+      sqlselect += " LEFT JOIN Employees emp ON e.EmployeeId = emp.EmployeeId";
+      if (model == 1) // Coordinator
+      {
+        if (CheckString(dropDown?.RefNumber))
+        {
+          sqlselect += " WHERE e.RefNumber = '" + dropDown!.RefNumber! + "'";
+        }
+        else if (CheckString(dropDown?.StatusId))
+        {
+          sqlselect += " WHERE e.StatusId = '" + dropDown!.StatusId! + "'";
+          if (CheckString(dropDown?.DepartmentId))
+          {
+            sqlselect += " AND e.DepartmentId = '" + dropDown!.DepartmentId! + "'";
+          }
+        }
+        else if (CheckString(dropDown?.DepartmentId))
+        {
+          sqlselect += " WHERE e.DepartmentId = '" + dropDown!.DepartmentId! + "'";
+        }
+      }
+      else if (model == 2) // Investigator
+      {
+        sqlselect += " WHERE e.EmployeeId = '" + userName + "'";
+        sqlselect += AndOptions(dropDown);
+      }
+      else if (model == 3) // Manager
+      {
+        sqlselect += " WHERE e.DepartmentId = '" + userDepartmentId + "'";
+        sqlselect += AndOptions(dropDown);
+      }
+
+      sqlselect += " ORDER BY e.RefNumber DESC";
+      List<MyErrand> errandList = await context.MyErrands.FromSqlRaw(sqlselect).ToListAsync();
+
+      return errandList;
+    }
+
+    /**
+     * Get single errand with details
+     */
+    public async Task<Errand> GetErrandDetailAsync(int errandId)
+    {
+      Errand? errand = await (from err in Errands
+                              where err.ErrandId == errandId
+                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                              from deptE in departmentErrand.DefaultIfEmpty()
+                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                              from empE in employeeErrand.DefaultIfEmpty()
+                              select new Errand
+                              {
+                                ErrandId = err.ErrandId,
+                                RefNumber = err.RefNumber,
+                                Place = err.Place,
+                                TypeOfCrime = err.TypeOfCrime,
+                                DateOfObservation = err.DateOfObservation,
+                                InformerName = err.InformerName,
+                                InformerPhone = err.InformerPhone,
+                                Observation = err.Observation,
+                                InvestigatorInfo = err.InvestigatorInfo,
+                                InvestigatorAction = err.InvestigatorAction,
+                                StatusId = err.StatusId,
+                                DepartmentId = err.DepartmentId,
+                                EmployeeId = err.EmployeeId,
+                                StatusName = stat.StatusName,
+                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) || err.DepartmentId == "D00" ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                              }).FirstOrDefaultAsync();
+      if (errand is not null)
+      {
+        errand.Pictures = await context.Pictures.Where(p => p.ErrandId == errandId).ToListAsync();
+        errand.Samples = await context.Samples.Where(s => s.ErrandId == errandId).ToListAsync();
+        
+      }
+
+      if (errand is null)
+      {
+        throw new InvalidOperationException("Errand not found " + errandId);
+      }
+
+      return errand;
     }
     /**
      * Update:
@@ -98,8 +185,9 @@ namespace EnvironmentCrime.Models
       }
       catch (Exception)
       {
-        return false;
+        // Ignore errors
       }
+      return false;
     }
     /**
      * Create:
@@ -110,7 +198,7 @@ namespace EnvironmentCrime.Models
     {
       try
       {
-        if (errand != null && errand.ErrandId == 0)
+        if (errand is not null && errand.ErrandId == 0)
         {
           Sequence? dbSeq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == 1);
           int CurrentValue = dbSeq!.CurrentValue;
@@ -118,7 +206,7 @@ namespace EnvironmentCrime.Models
           errand.InvestigatorInfo = "";
           errand.InvestigatorAction = "";
           errand.StatusId = "S_A";
-          errand.DepartmentId = "";
+          errand.DepartmentId = "D00";
           errand.EmployeeId = "";
           await context.Errands.AddAsync(errand);
 
@@ -130,7 +218,7 @@ namespace EnvironmentCrime.Models
       }
       catch (Exception)
       {
-        // All error is ignored
+        // Ignore errors
       }
       return "Error in SaveNewErrandAsync";
     }
@@ -148,7 +236,7 @@ namespace EnvironmentCrime.Models
           _ => null
         };
 
-        if (entity == null)
+        if (entity is null)
           return false;
 
         context.Add(entity); // Insert new record in db.
@@ -157,28 +245,9 @@ namespace EnvironmentCrime.Models
       }
       catch
       {
-        return false;
+        // Ignore errors
       }
-    }
-    /**
-     * Update: (Not used atm.)
-     * Update an existing sequence.
-     */
-    public async Task<bool> UpdateSequenceAsync(Sequence sequence)
-    {
-      try
-      {
-        Sequence? dbEntry = await context.Sequences.FirstOrDefaultAsync(seq => seq.Id == sequence.Id);
-        if (dbEntry != null)
-        {
-          dbEntry.CurrentValue = sequence.CurrentValue;
-        }
-        return true;
-      }
-      catch (Exception)
-      {
-        return false;
-      }
+      return false;
     }
   }
 }

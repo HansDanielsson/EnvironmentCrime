@@ -5,15 +5,15 @@
 <h2>Detaljer för ärendet</h2>
 <p class="info">Du är inloggad som samordnare</p>
 
-@await Component.InvokeAsync("ShowOneCrime", ViewBag.errandId)
+@await Component.InvokeAsync("ShowOneCrime")
 
 <section id="bottomColumn">
-  <h3>Redigera ärende</h3>
   <form asp-controller="Coordinator" asp-action="SaveDepartment" method="post">
     <p>
+      <h3>Redigera ärende</h3>
       Ange enhet:
       <select name="DepartmentId">
-        <option selected="selected">Välj</option>
+        <option>Välj</option>
         @foreach (Department dept in Model)
         {
           @if (dept.DepartmentName != "Småstads kommun")
@@ -23,6 +23,6 @@
         }
       </select>
     </p>
-    <p><input class="button" type="submit" value="Spara"></p>
+    <input class="button" type="submit" value="Spara" />
   </form>
 </section>

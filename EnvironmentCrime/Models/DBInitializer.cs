@@ -1,6 +1,6 @@
 ﻿namespace EnvironmentCrime.Models
 {
-  public class DBInitializer
+  public static class DBInitializer
   {
     public static void EnsurePopulated(IServiceProvider servises)
     {

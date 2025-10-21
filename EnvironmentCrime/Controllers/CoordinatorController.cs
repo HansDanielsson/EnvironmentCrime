@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
+  [Authorize(Roles = "Coordinator")]
   public class CoordinatorController : Controller
   {
     private readonly IERepository repository;
     public CoordinatorController(IERepository repo) => repository = repo;
+    /*
+     * Show errand with id number.
+     */
     public ViewResult CrimeCoordinator(int id)
     {
       // Pass the errandId to the view using ViewBag
@@ -17,12 +22,13 @@ namespace EnvironmentCrime.Controllers
     public ViewResult ReportCrime()
     {
       Errand? myErrand = HttpContext.Session.Get<Errand>("CoordinatorCrime");
-      return myErrand == null ? View() : View(myErrand);
+      return myErrand is null ? View() : View(myErrand);
     }
 
-    public ViewResult StartCoordinator()
+    public async Task<ViewResult> StartCoordinator(DropDownViewModel dropDown)
     {
-      return View(repository);
+      List<MyErrand> cordinatorList = await repository.GetErrandsAsync(1, dropDown);
+      return View(cordinatorList);
     }
 
     public async Task<ViewResult> Thanks()
@@ -30,9 +36,16 @@ namespace EnvironmentCrime.Controllers
       /**
        * Save a new record and display the generated RefNumber
        */
-      Errand errand = HttpContext.Session.Get<Errand>("CoordinatorCrime")!;
-      ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
-
+      Errand? errand = HttpContext.Session.Get<Errand>("CoordinatorCrime");
+      if (errand is null)
+      {
+        ViewBag.RefNumber = "Fel med sessionen, registrera ärendet igen!";
+      }
+      else
+      {
+        ViewBag.RefNumber = await repository.SaveNewErrandAsync(errand);
+      }
+      
       HttpContext.Session.Remove("CoordinatorCrime");
       return View();
     }
@@ -45,8 +58,15 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public ViewResult Validate(Errand errand)
     {
-      // Save user input errand to session CoordinatorCrime
-      HttpContext.Session.Set("CoordinatorCrime", errand);
+      if (ModelState.IsValid)
+      {
+        // Save user input errand to session CoordinatorCrime
+        HttpContext.Session.Set("CoordinatorCrime", errand);
+      }
+      else
+      {
+        ModelState.AddModelError("", "Nu blev det något fel!");
+      }
       return View(errand);
     }
     /**
@@ -55,13 +75,20 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public async Task<IActionResult> SaveDepartment(string DepartmentId)
     {
-      if (DepartmentId != null && DepartmentId != "Välj")
+      if (!string.IsNullOrWhiteSpace(DepartmentId) && DepartmentId != "Välj")
       {
-        Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
-        errand.DepartmentId = DepartmentId; // Change department
-        await repository.SaveErrandAsync(errand);
+        Errand? errand = HttpContext.Session.Get<Errand>("WorkCrime");
+        if (errand is not null)
+        {
+          errand.DepartmentId = DepartmentId; // Change department
+          await repository.SaveErrandAsync(errand);
+        }
       }
       return RedirectToAction("StartCoordinator");
+    }
+    public IActionResult SelectDropDown(DropDownViewModel dropDown)
+    {
+      return RedirectToAction("StartCoordinator", dropDown);
     }
   }
 }

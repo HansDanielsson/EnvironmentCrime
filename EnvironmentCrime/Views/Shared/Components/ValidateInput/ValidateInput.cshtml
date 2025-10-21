@@ -1,0 +1,28 @@
+﻿@model Errand
+@{
+  var role = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<h2>Din anmälan av miljöbrott</h2>
+<p class="info">@ViewBag.msg1</p>
+<p class="label">
+  Vänligen läs igenom din anmälan och se att allt är okej.<br>
+  Om något är fel, gå tillbaka och ändra. Annars välj Bekräfta.
+</p>
+<p><span class="label">Var har brottet skett någonstans?</span><br>@Model.Place</p>
+<p><span class="label">Vilken typ av brott?</span><br>@Model.TypeOfCrime</p>
+<p><span class="label">När skedde brottet?</span><br>@Model.DateOfObservation.ToString("yyyy-MM-dd")</p>
+<p><span class="label">Ditt namn (för- och efternamn):</span><br>@Model.InformerName</p>
+<p><span class="label">Din telefon:</span><br>@Model.InformerPhone</p>
+<p><span class="label">Mer information:</span><br>@Model.Observation<br></p>
+<p>
+  @if (role == "Coordinator")
+  {
+    <a asp-controller="Coordinator" asp-action="ReportCrime" class="button">Tillbaka</a>
+  }
+  else
+  {
+    <a asp-controller="Home" asp-action="Index" class="button">Tillbaka</a>
+    role = "Citizen";
+  }
+  <a asp-controller="@role" asp-action="Thanks" class="button">Bekräfta</a>
+</p>

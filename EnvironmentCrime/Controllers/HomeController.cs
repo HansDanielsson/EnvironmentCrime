@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using EnvironmentCrime.Models;
 using EnvironmentCrime.Infrastructure;
+using EnvironmentCrime.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EnvironmentCrime.Controllers
 {
@@ -9,11 +9,7 @@ namespace EnvironmentCrime.Controllers
     public ViewResult Index()
     {
       Errand? myErrand = HttpContext.Session.Get<Errand>("IndexCrime");
-      return myErrand == null ? View() : View(myErrand);
-    }
-    public ViewResult Login()
-    {
-      return View();
+      return myErrand is null ? View() : View(myErrand);
     }
   }
 }

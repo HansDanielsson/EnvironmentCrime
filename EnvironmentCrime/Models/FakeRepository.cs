@@ -75,44 +75,60 @@ namespace EnvironmentCrime.Models
       {
         new() { Id = 1, CurrentValue = 200 }
       }.AsQueryable();
-
+    
+    /**
+     * Read:
+     */
+    /**
+     * Get an List of MyErrand
+     */
+    public async Task<List<MyErrand>> GetErrandsAsync(int model, DropDownViewModel dropDown)
+    {
+      await Task.CompletedTask;
+      return [];
+    }
     /**
      * Get single errand with details
      */
-    public async Task<ErrandInfo> GetErrandDetail(int errandid)
+    public async Task<Errand> GetErrandDetailAsync(int errandId)
     {
+      Errand? errand = await (from err in Errands
+                              where err.ErrandId == errandId
+                              join stat in ErrandStatuses on err.StatusId equals stat.StatusId
+                              join dep in Departments on err.DepartmentId equals dep.DepartmentId into departmentErrand
+                              from deptE in departmentErrand.DefaultIfEmpty()
+                              join em in Employees on err.EmployeeId equals em.EmployeeId into employeeErrand
+                              from empE in employeeErrand.DefaultIfEmpty()
+                              select new Errand
+                              {
+                                ErrandId = err.ErrandId,
+                                RefNumber = err.RefNumber,
+                                Place = err.Place,
+                                TypeOfCrime = err.TypeOfCrime,
+                                DateOfObservation = err.DateOfObservation,
+                                InformerName = err.InformerName,
+                                InformerPhone = err.InformerPhone,
+                                Observation = err.Observation,
+                                InvestigatorInfo = err.InvestigatorInfo,
+                                InvestigatorAction = err.InvestigatorAction,
+                                StatusId = err.StatusId,
+                                DepartmentId = err.DepartmentId,
+                                EmployeeId = err.EmployeeId,
+                                Samples = err.Samples,
+                                Pictures = err.Pictures,
+                                StatusName = stat.StatusName,
+                                DepartmentName = string.IsNullOrWhiteSpace(err.DepartmentId) ? "ej tillsatt" : deptE.DepartmentName,
+                                EmployeeName = string.IsNullOrWhiteSpace(err.EmployeeId) ? "ej tillsatt" : empE.EmployeeName
+                              }).FirstOrDefaultAsync();
 
-      Errand? errand = await Errands.FirstOrDefaultAsync(ed => ed.ErrandId == errandid) ?? throw new InvalidOperationException("Errand not found " + errandid);
-      /**
-       * Database contains only the Ids for Status, Department and Employee in key fields.
-       * * lookup the names from the related collections and add to the ViewModel
-       */
-      var es = await ErrandStatuses.FirstOrDefaultAsync(st => st.StatusId == errand.StatusId);
-      string sName = es == null ? "Inte angivet" : es.StatusName!;
-
-      var dep = await Departments.FirstOrDefaultAsync(dep => dep.DepartmentId == errand.DepartmentId);
-      string dName = dep == null ? "Inte angivet" : dep.DepartmentName!;
-
-      var emp = await Employees.FirstOrDefaultAsync(emp => emp.EmployeeId == errand.EmployeeId);
-      string eName = emp == null ? "Inte angivet" : emp.EmployeeName!;
-
-      ErrandInfo viewModel = new()
+      if (errand is null)
       {
-        Errands = errand,
-        StatusName = sName,
-        DepartmentName = dName,
-        EmployeeName = eName
-      };
-      return viewModel;
+        throw new InvalidOperationException("Errand not found " + errandId);
+      }
+
+      return errand;
     }
-    /**
-     * Get single sequense with details
-     */
-    public async Task<Sequence> GetSequenceAsync(int seqid)
-    {
-      var seq = await Sequences.FirstOrDefaultAsync(seq => seq.Id == seqid);
-      return seq ?? throw new InvalidOperationException("Sequence not found " + seqid);
-    }
+
     /**
      * Update:
      * Update a errand to the repository.
@@ -121,7 +137,8 @@ namespace EnvironmentCrime.Models
      */
     public async Task<bool> SaveErrandAsync(Errand errand)
     {
-      return await Task.FromResult(true);
+      await Task.CompletedTask;
+      return true;
     }
     /**
      * Create:
@@ -130,19 +147,13 @@ namespace EnvironmentCrime.Models
      */
     public async Task<string> SaveNewErrandAsync(Errand errand)
     {
-      return await Task.FromResult("Not implemented");
+      await Task.CompletedTask;
+      return "Not implemented";
     }
     public async Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile)
     {
-      return await Task.FromResult(true);
-    }
-    /**
-     * Update: (Not used atm.)
-     * Update an existing sequence.
-     */
-    public async Task<bool> UpdateSequenceAsync(Sequence sequence)
-    {
-      return await Task.FromResult(true);
+      await Task.CompletedTask;
+      return true;
     }
   }
 }

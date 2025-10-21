@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnvironmentCrime.Controllers
 {
+  [Authorize(Roles = "Investigator")]
   public class InvestigatorController : Controller
   {
     private readonly IERepository repository;
@@ -17,25 +19,19 @@ namespace EnvironmentCrime.Controllers
     /*
      * Show errand with id number.
      */
-    public ViewResult CrimeInvestigator(int id)
+    public async Task<ViewResult> CrimeInvestigator(int id)
     {
-      SaveInvestigatorViewModel viewModel = new()
-      {
-        ErrandStatus = [.. repository.ErrandStatuses
-        .Where(static e => e.StatusId == "S_C" || e.StatusId == "S_D") // Only "påbörjad" and "klar"
-        .Select(static e => new SelectListItem
-        {
-          Value = e.StatusId,
-          Text = e.StatusName
-        })]
-      };
+      ViewBag.ListOfStatus = await repository.ErrandStatuses
+        .Where(e => e.StatusId == "S_C" || e.StatusId == "S_D").ToListAsync(); // Only "påbörjad" and "klar"
+
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
-      return View(viewModel);
+      return View();
     }
-    public ViewResult StartInvestigator()
+    public async Task<ViewResult> StartInvestigator(DropDownViewModel dropDown)
     {
-      return View(repository);
+      List<MyErrand> investigatorList = await repository.GetErrandsAsync(2, dropDown);
+      return View(investigatorList);
     }
 
     /**
@@ -64,16 +60,16 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public async Task<IActionResult> SaveInvestigator(SaveInvestigatorViewModel model)
     {
-      if (model != null)
+      if (model is not null)
       {
         Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
 
-        if (!string.IsNullOrEmpty(model.InvestigatorInfo))
+        if (!string.IsNullOrWhiteSpace(model.InvestigatorInfo))
         {
           errand.InvestigatorInfo += " " + model.InvestigatorInfo; // Add text
         }
 
-        if (!string.IsNullOrEmpty(model.InvestigatorAction))
+        if (!string.IsNullOrWhiteSpace(model.InvestigatorAction))
         {
           errand.InvestigatorAction += " " + model.InvestigatorAction; // Add text
         }
@@ -81,13 +77,18 @@ namespace EnvironmentCrime.Controllers
         await SaveFileAsync(errand.ErrandId, "sample", model.Sample);
         await SaveFileAsync(errand.ErrandId, "picture", model.Picture);
 
-        if (!string.IsNullOrEmpty(model.StatusId))
+        if (!string.IsNullOrWhiteSpace(model.StatusId) && model.StatusId != "Välj")
         {
           errand.StatusId = model.StatusId;
         }
         await repository.SaveErrandAsync(errand);
       }
       return RedirectToAction("StartInvestigator");
+    }
+    public IActionResult SelectDropDown(DropDownViewModel dropDown)
+    {
+      
+      return RedirectToAction("StartInvestigator", dropDown);
     }
   }
 }

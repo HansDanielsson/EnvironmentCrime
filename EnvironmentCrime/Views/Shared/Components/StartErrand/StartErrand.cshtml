@@ -1,0 +1,40 @@
+﻿@model IEnumerable<MyErrand>
+@{
+  var role = ViewContext.RouteData.Values["controller"]?.ToString();
+  var aspaction = "Crime" + role;
+}
+
+@await Component.InvokeAsync("DropDownList", role)
+<!--Nedan ser man en lista på ärenden-->
+<table>
+  <tr>
+    <th>Ärende anmält</th>
+    <th>Ärendenummer</th>
+    <th>Miljöbrott</th>
+    <th>Status</th>
+    <th>Avdelning</th>
+    <th>Handläggare</th>
+  </tr>
+  @if (Model.Any())
+  {
+    @foreach (MyErrand errand in Model)
+    {
+      <tr>
+        <td>@errand.DateOfObservation.ToString("yyyy-MM-dd")</td>
+        <td>
+          <a asp-controller="@role" asp-action="@aspaction" asp-route-id="@errand.ErrandId">@errand.RefNumber</a>
+        </td>
+        <td>@errand.TypeOfCrime</td>
+        <td>@errand.StatusName</td>
+        <td>@errand.DepartmentName</td>
+        <td>@errand.EmployeeName</td>
+      </tr>
+    }
+  }
+  else
+  {
+    <tr>
+      Inga ärenden finns enligt filtrering/sökningen
+    </tr>
+  }
+</table>

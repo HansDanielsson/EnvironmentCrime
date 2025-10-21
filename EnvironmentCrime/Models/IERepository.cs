@@ -15,14 +15,14 @@
     IQueryable<Sequence> Sequences { get; }
 
     /**
-     * Get single errand with details
+     * Get items in List.
      */
-    Task<ErrandInfo> GetErrandDetail(int errandid);
+    Task<List<MyErrand>> GetErrandsAsync(int model, DropDownViewModel dropDown);
 
     /**
-     * Get single sequense with details
+     * Get single errand with details
      */
-    Task<Sequence> GetSequenceAsync(int seqid);
+    Task<Errand> GetErrandDetailAsync(int errandId);
 
     /**
      * Update: (Not used atm)
@@ -39,11 +39,5 @@
      */
     Task<string> SaveNewErrandAsync(Errand errand);
     Task<bool> InsertFileAsync(string recordModel, int errandId, string pathFile);
-
-    /**
-     * Update: (Not used atm.)
-     * Update an existing sequence.
-     */
-    Task<bool> UpdateSequenceAsync(Sequence sequence);
   }
 }

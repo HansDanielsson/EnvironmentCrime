@@ -1,32 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EnvironmentCrime.Infrastructure;
 using EnvironmentCrime.Models;
-using EnvironmentCrime.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnvironmentCrime.Controllers
 {
+  [Authorize(Roles = "Manager")]
   public class ManagerController : Controller
   {
     private readonly IERepository repository;
-    public ManagerController(IERepository repo) => repository = repo;
-    public ViewResult CrimeManager(int id)
+    private readonly IHttpContextAccessor contextAcc;
+    public ManagerController(IERepository repo, IHttpContextAccessor cont)
     {
+      repository = repo;
+      contextAcc = cont;
+    }
+    /*
+     * Show errand with id number.
+     */
+    public async Task<ViewResult> CrimeManager(int id)
+    {
+      string userName = contextAcc.HttpContext!.User.Identity!.Name!;
+      string? userDepartmentId = await repository.Employees.Where(emp => emp.EmployeeId == userName).Select(emp => emp.DepartmentId).FirstOrDefaultAsync();
+
       // Load Employess from database record
-      SaveManagerViewModel viewModel = new()
-      {
-        Employees = [.. repository.Employees.Select(static e => new SelectListItem
-        {
-          Value = e.EmployeeId,
-          Text = e.EmployeeName
-        })]
-      };
+      ViewBag.ListOfEmployee = await repository.Employees.Where(emp => emp.DepartmentId == userDepartmentId && emp.EmployeeId != userName).ToListAsync();
+      
       // Pass the errandId to the view using ViewBag
       ViewBag.errandId = id;
-      return View(viewModel);
+      return View();
     }
-    public ViewResult StartManager()
+    public async Task<ViewResult> StartManager(DropDownViewModel dropDown)
     {
-      return View(repository);
+      List<MyErrand> managerList = await repository.GetErrandsAsync(3, dropDown);
+      return View(managerList);
     }
     /*
      * Update errand with user input.
@@ -34,25 +42,29 @@ namespace EnvironmentCrime.Controllers
     [HttpPost]
     public async Task<IActionResult> SaveManager(SaveManagerViewModel model)
     {
-      if (model != null)
+      Errand? errand = HttpContext.Session.Get<Errand>("WorkCrime");
+      if (model is not null && errand is not null)
       {
-        Errand errand = HttpContext.Session.Get<Errand>("WorkCrime")!;
         if (model.NoAction)
         {
-          if (!string.IsNullOrEmpty(model.InvestigatorInfo))
+          if (!string.IsNullOrWhiteSpace(model.InvestigatorInfo))
           {
             errand.InvestigatorInfo = model.InvestigatorInfo;
             errand.StatusId = "S_B";
             errand.EmployeeId = ""; // remove
           }
         }
-        else if (!string.IsNullOrEmpty(model.EmployeeId))
+        else if (!string.IsNullOrWhiteSpace(model.EmployeeId) && model.EmployeeId != "Välj")
         {
           errand.EmployeeId = model.EmployeeId; // Update
         }
         await repository.SaveErrandAsync(errand);
       }
       return RedirectToAction("StartManager");
+    }
+    public IActionResult SelectDropDown(DropDownViewModel dropDown)
+    {
+      return RedirectToAction("StartManager", dropDown);
     }
   }
 }
